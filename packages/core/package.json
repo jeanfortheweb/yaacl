@@ -1,0 +1,33 @@
+{
+  "name": "@yaacl/core",
+  "version": "1.0.0",
+  "description": "Yet another ACL",
+  "main": "es5/index.js",
+  "types": "es5/index.d.ts",
+  "scripts": {
+    "test": "jest",
+    "build": "tsc",
+    "prepublishOnly": "tsc"
+  },
+  "keywords": ["acl", "security"],
+  "author": "jeanfortheweb",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeanfortheweb/yaacl"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^22.1.4",
+    "ts-jest": "^22.0.1",
+    "typescript": "^2.6.2"
+  },
+  "jest": {
+    "bail": true,
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "moduleFileExtensions": ["ts", "js"],
+    "testRegex": "\\.spec\\.ts$",
+    "mapCoverage": true
+  }
+}
