@@ -8,11 +8,10 @@
     "test": "jest",
     "prepublishOnly": "tsc"
   },
-  "keywords": [
-    "acl",
-    "security",
-    "adapter"
-  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": ["acl", "security", "adapter"],
   "author": "jeanfortheweb",
   "repository": {
     "type": "git",
@@ -30,10 +29,7 @@
     "transform": {
       "^.+\\.ts$": "ts-jest"
     },
-    "moduleFileExtensions": [
-      "ts",
-      "js"
-    ],
+    "moduleFileExtensions": ["ts", "js"],
     "testRegex": "\\.spec\\.ts$",
     "mapCoverage": true
   },
