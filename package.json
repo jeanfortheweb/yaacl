@@ -5,5 +5,8 @@
     "jest": "^22.1.4"
   },
   "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "workspaces": ["packages/*"]
 }
