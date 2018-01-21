@@ -4,6 +4,6 @@
     "lerna": "^2.8.0",
     "jest": "^22.1.4"
   },
-  "private": true,
+  "private": false,
   "workspaces": ["packages/*"]
 }
