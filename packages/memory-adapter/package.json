@@ -1,6 +1,6 @@
 {
   "name": "@yaacl/memory-adapter",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Memory adapter for yaacl",
   "main": "es5/index.js",
   "types": "es5/index.d.ts",
@@ -38,6 +38,6 @@
     "mapCoverage": true
   },
   "dependencies": {
-    "@yaacl/core": "^0.1.0"
+    "@yaacl/core": "^0.2.0"
   }
 }
