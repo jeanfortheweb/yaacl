@@ -1,5 +1,6 @@
 {
-	"devDependencies": {
-		"lerna": "^2.8.0"
-	}
+  "license": "ISC",
+  "devDependencies": {
+    "lerna": "^2.8.0"
+  }
 }

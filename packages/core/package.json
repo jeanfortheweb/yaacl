@@ -6,13 +6,9 @@
   "types": "es5/index.d.ts",
   "scripts": {
     "test": "jest",
-    "build": "tsc",
     "prepublishOnly": "tsc"
   },
-  "keywords": [
-    "acl",
-    "security"
-  ],
+  "keywords": ["acl", "security"],
   "author": "jeanfortheweb",
   "repository": {
     "type": "git",
@@ -29,10 +25,7 @@
     "transform": {
       "^.+\\.ts$": "ts-jest"
     },
-    "moduleFileExtensions": [
-      "ts",
-      "js"
-    ],
+    "moduleFileExtensions": ["ts", "js"],
     "testRegex": "\\.spec\\.ts$",
     "mapCoverage": true
   }
