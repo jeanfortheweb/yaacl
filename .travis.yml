@@ -11,12 +11,9 @@ jobs:
   include:
     - stage: test
       script: yarn lerna run test
-    - stage: info
-      script:
-        - echo $TRAVIS_BRANCH
-        - echo $TRAVIS_TAG
+
     - stage: publish
-      if: env(TRAVIS_BRANCH) = master
+      if: tag IS blank AND branch = master
       script:
         - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc 
         - yarn lerna publish --yes --npm-client=npm
