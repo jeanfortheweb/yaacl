@@ -28,7 +28,7 @@ const objectIdentity = {
 	getObjectId: () => 'object-4664';
 };
 
-yaacl.grant(securityIdentity, objectIdentity, Privileges.READ);w
+yaacl.grant(securityIdentity, objectIdentity, Privileges.READ);
 
 yaacl.granted(securityIdentity, objectIdentity, Privileges.READ); // true
 
