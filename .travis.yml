@@ -14,7 +14,7 @@ jobs:
       script: yarn lerna run test
 
     - stage: publish
-      if: tag IS blank AND branch = master
+      if: tag IS blank AND env(TRAVIS_PULL_REQUEST) = false AND env(TRAVIS_BRANCH) = master
       script:
         - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc 
-        - yarn lerna publish --canary --yes --npm-client=npm
+        - yarn lerna publish --canary --yes --npm-client=npm -git-remote=$TRAVIS_BRANCH
