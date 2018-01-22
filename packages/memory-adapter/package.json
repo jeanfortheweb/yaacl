@@ -6,7 +6,7 @@
   "types": "es5/index.d.ts",
   "scripts": {
     "test": "jest",
-    "prepare": "tsc"
+    "prepublish": "tsc"
   },
   "publishConfig": {
     "access": "public"
