@@ -1,5 +1,3 @@
-if: tag IS blank
-
 language: node_js
 node_js:
   - "6"
@@ -16,7 +14,7 @@ script: yarn lerna run test
 jobs:
   include:
     - stage: publish
-      if: tag IS blank AND env(TRAVIS_BRANCH) = master
+      if: env(TRAVIS_BRANCH) = master
       script:
         - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc 
         - yarn lerna publish --yes --npm-client=npm
