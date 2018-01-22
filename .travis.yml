@@ -7,20 +7,13 @@ install:
   - yarn install
   - yarn lerna bootstrap
 
-stages:
-  - name: test
-    if: tag IS blank
-
-  - name: publish
-    if: tag IS blank AND env(TRAVIS_BRANCH) = master
-  
+if: tag IS blank
+script: yarn lerna run test
 
 jobs:
   include:
-    - stage: test
-      script: yarn lerna run test
-
     - stage: publish
+      if: tag IS blank AND env(TRAVIS_BRANCH) = master
       script:
         - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc 
         - yarn lerna publish --yes --npm-client=npm
