@@ -7,16 +7,14 @@ install:
   - yarn install
   - yarn lerna bootstrap
 
-stages:
-  - test
-  - name: publish
-    if: branch = master
-  - name: push
-    if: branch = master
-
 jobs:
   include:
     - stage: test
+      if: tag IS blank
       script: yarn lerna run test
+
     - stage: publish
-      script: yarn lerna publish --canary --yes --npm-client=npm
+      if: tag IS blank AND branch = master
+      script:
+        - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc 
+        - yarn lerna publish --canary --yes --npm-client=npm
