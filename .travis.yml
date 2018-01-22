@@ -20,4 +20,6 @@ jobs:
       if: tag IS blank AND branch = master
       script:
         - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc 
+        - git checkout master
+        - git pull master
         - yarn lerna publish --yes --npm-client=npm
