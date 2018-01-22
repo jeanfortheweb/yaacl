@@ -48,7 +48,7 @@ export const create = (): Adapter =>
       return (entry && entry.privileges) || Privileges.NONE;
     },
 
-    delete(identity: SecurityIdentity, resource?: ObjectIdentity): Promise<any> {
+    async delete(identity: SecurityIdentity, resource?: ObjectIdentity): Promise<any> {
       const conditions: any = {
         identity: identity.getSecurityId(),
       };
@@ -57,6 +57,6 @@ export const create = (): Adapter =>
         conditions.resource = resource.getObjectId();
       }
 
-      return EntryModel.remove(conditions).exec();
+      await EntryModel.remove(conditions).exec();
     },
   });
