@@ -7,20 +7,21 @@ cache:
 
 install:
   - yarn install
-  - yarn lerna bootstrap
+  - yarn global add lerna
+  - lerna bootstrap
 
 services: mongodb
 
 jobs:
   include:
     - stage: test
-      script: yarn lerna run test
+      script: lerna run test
 
     - stage: publish
       if: tag IS blank AND branch = master AND type != pull_request
       before_install:
         
       script:
-        - yarn config set //registry.npmjs.org/:_authToken $NPM_TOKEN
+        - npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN
         - git checkout master
-        - yarn lerna publish --yes --cd-version patch --npm-client=npm --force-publish
+        - lerna publish --yes --cd-version patch --npm-client=npm --force-publish
