@@ -68,7 +68,7 @@ An object/class could even be a `SecurityIdentity` and an `ObjectIdentity` at th
 Privileges are represented as bitmask, but don't worry, you don't have to learn them all. They are already predefined by the `Privileges` enumeration:
 
 ```ts
-export enum Privileges {
+enum Privileges {
   NONE = 0,
   READ = 1,
   WRITE = 2,
