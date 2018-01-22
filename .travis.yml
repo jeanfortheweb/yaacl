@@ -23,4 +23,4 @@ jobs:
       script:
         - yarn config set //registry.npmjs.org/:_authToken $NPM_TOKEN
         - git checkout master
-        - yarn lerna publish --yes --cd-version minor --npm-client=npm --force-publish
+        - yarn lerna publish --yes --cd-version patch --npm-client=npm --force-publish
