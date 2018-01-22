@@ -10,7 +10,7 @@ YAACL is a quiet simple and easy to learn ACL interface for node. With the possi
 yarn install @yaacl/core @yaacl/memory-adapter
 ```
 
-2. Create a yaacl and use it.
+2. Create a yaacl and use it:
 
 ```js
 import { create as createYaacl, Privileges } from '@yaacl/core';
