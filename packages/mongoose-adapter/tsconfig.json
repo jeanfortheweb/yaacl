@@ -1,24 +1,16 @@
 {
-    "compilerOptions": {
-        "module": "commonjs",
-        "target": "es5",
-        "lib": [
-            "es6"
-        ],
-        "outDir": "./es5",
-        "declaration": true,
-        "strict": true,
-        "noImplicitAny": false,
-        "noImplicitThis": false,
-        "strictNullChecks": true,
-        "forceConsistentCasingInFileNames": true,
-        "noUnusedLocals": true,
-    },
-    "include": [
-        "src"
-    ],
-    "exclude": [
-        "node_modules",
-        "**/*.spec.ts"
-    ]
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es5",
+    "lib": ["es6"],
+    "outDir": "./es5",
+    "declaration": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "noImplicitThis": false,
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": true,
+    "noUnusedLocals": true
+  },
+  "include": ["src", "node_modules/@types"]
 }
