@@ -1,0 +1,39 @@
+{
+  "name": "@yaacl/mongoose-adapter",
+  "version": "0.2.8",
+  "description": "Mongoose adapter for yaacl",
+  "main": "es5/index.js",
+  "types": "es5/index.d.ts",
+  "scripts": {
+    "test": "jest",
+    "prepublish": "tsc"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": ["acl", "security", "adapter"],
+  "author": "jeanfortheweb",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeanfortheweb/yaacl"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jest": "^22.0.1",
+    "jest": "^22.1.4",
+    "ts-jest": "^22.0.1",
+    "typescript": "^2.6.2"
+  },
+  "jest": {
+    "bail": true,
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "moduleFileExtensions": ["ts", "js"],
+    "testRegex": "\\.spec\\.ts$",
+    "mapCoverage": true
+  },
+  "dependencies": {
+    "@yaacl/core": "^0.2.8"
+  }
+}
