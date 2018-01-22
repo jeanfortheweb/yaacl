@@ -4,8 +4,7 @@ node_js:
 
 cache: yarn
 install:
-  - yarn install
-  - yarn lerna bootstrap
+  - echo "test"
 
 jobs:
   include:
