@@ -1,8 +1,21 @@
-language: node_js
-cache: yarn
-node_js:
-  - "lts/*"
+if: tag IS blank
 
-script:
+language: node_js
+node_js:
+  - "6"
+
+cache: yarn
+
+install:
+  - yarn install
   - yarn lerna bootstrap
-  - yarn lerna run test
+
+script: yarn lerna run test
+
+jobs:
+  include:
+    - stage: publish
+      if: tag IS blank AND env(TRAVIS_BRANCH) = master
+      script:
+        - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc 
+        - yarn lerna publish --yes --npm-client=npm
