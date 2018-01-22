@@ -15,7 +15,7 @@ jobs:
       script: yarn lerna run test
 
     - stage: publish
-      if: tag IS blank AND branch = master
+      if: tag IS blank AND branch = master AND type != pull_request
       script:
         - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc 
         - git checkout master
