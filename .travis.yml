@@ -3,10 +3,6 @@ cache: yarn
 node_js:
   - "lts/*"
 
-env:
-  - PACKAGE=core
-  - PACKAGE=memory-adapter
-
 script:
   - lerna bootstrap
-  - lerna run test --scope $PACKAGE
+  - lerna run test
