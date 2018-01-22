@@ -19,4 +19,4 @@ jobs:
       script:
         - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc 
         - git checkout master
-        - yarn lerna publish --yes --npm-client=npm
+        - yarn lerna publish --yes --cd-version minor --npm-client=npm
