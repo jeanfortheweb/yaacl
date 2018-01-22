@@ -11,7 +11,11 @@
   "publishConfig": {
     "access": "public"
   },
-  "keywords": ["acl", "security", "adapter"],
+  "keywords": [
+    "acl",
+    "security",
+    "adapter"
+  ],
   "author": "jeanfortheweb",
   "repository": {
     "type": "git",
@@ -20,6 +24,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/jest": "^22.0.1",
+    "@types/mongoose": "^4.7.33",
     "jest": "^22.1.4",
     "ts-jest": "^22.0.1",
     "typescript": "^2.6.2"
@@ -29,11 +34,15 @@
     "transform": {
       "^.+\\.ts$": "ts-jest"
     },
-    "moduleFileExtensions": ["ts", "js"],
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
     "testRegex": "\\.spec\\.ts$",
     "mapCoverage": true
   },
   "dependencies": {
-    "@yaacl/core": "^0.2.8"
+    "@yaacl/core": "^0.2.8",
+    "mongoose": "^5.0.1"
   }
 }

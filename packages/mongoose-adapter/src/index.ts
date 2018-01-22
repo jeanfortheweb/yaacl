@@ -1,45 +1,62 @@
 import { Adapter, Privileges, SecurityIdentity, ObjectIdentity } from '@yaacl/core';
+import * as mongoose from 'mongoose';
 
-export const create = (): Adapter => {
-  const data: {
-    [identity: string]: {
-      [resource: string]: Privileges;
-    };
-  } = {};
+interface EntryDocument extends mongoose.Document {
+  identity: string;
+  resource: string;
+  privileges: number;
+}
 
-  return Object.freeze<Adapter>({
-    store: (
+const EntrySchema = new mongoose.Schema({
+  identity: String,
+  resource: String,
+  privileges: Number,
+});
+
+const EntryModel = mongoose.model<EntryDocument>('__GUARDIAN__', EntrySchema);
+
+export const create = (): Adapter =>
+  Object.freeze<Adapter>({
+    async store(
       identity: SecurityIdentity,
       resource: ObjectIdentity,
       privileges: Privileges,
-    ): Promise<any> => {
-      if (!data[identity.getSecurityId()]) {
-        data[identity.getSecurityId()] = {};
+    ): Promise<any> {
+      let entry = await EntryModel.findOne({
+        identity: identity.getSecurityId(),
+        resource: resource.getObjectId(),
+      }).exec();
+
+      if (!entry) {
+        entry = new EntryModel({
+          identity: identity.getSecurityId(),
+          resource: resource.getObjectId(),
+        });
       }
 
-      data[identity.getSecurityId()][resource.getObjectId()] = privileges;
+      entry.privileges = privileges;
 
-      return Promise.resolve();
+      await entry.save();
     },
 
-    retrieve(identity: SecurityIdentity, resource: ObjectIdentity): Promise<Privileges> {
-      if (!data[identity.getSecurityId()]) {
-        return Promise.resolve(Privileges.NONE);
-      }
+    async retrieve(identity: SecurityIdentity, resource: ObjectIdentity): Promise<Privileges> {
+      const entry = await EntryModel.findOne({
+        identity: identity.getSecurityId(),
+        resource: resource.getObjectId(),
+      }).exec();
 
-      return Promise.resolve(
-        data[identity.getSecurityId()][resource.getObjectId()] || Privileges.NONE,
-      );
+      return (entry && entry.privileges) || Privileges.NONE;
     },
 
     delete(identity: SecurityIdentity, resource?: ObjectIdentity): Promise<any> {
+      const conditions: any = {
+        identity: identity.getSecurityId(),
+      };
+
       if (resource) {
-        delete data[identity.getSecurityId()][resource.getObjectId()];
-      } else {
-        delete data[identity.getSecurityId()];
+        conditions.resource = resource.getObjectId();
       }
 
-      return Promise.resolve();
+      return EntryModel.remove(conditions).exec();
     },
   });
-};
