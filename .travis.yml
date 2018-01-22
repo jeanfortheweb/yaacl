@@ -11,6 +11,10 @@ jobs:
   include:
     - stage: test
       script: yarn lerna run test
+    - stage: info
+      script:
+        - echo $TRAVIS_BRACH
+        - echo $TRAVIS_TAG
     - stage: publish
       if: env(TRAVIS_BRANCH) = master
       script:
