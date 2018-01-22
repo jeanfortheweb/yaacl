@@ -3,6 +3,19 @@ cache: yarn
 node_js:
   - "lts/*"
 
-script:
-  - yarn lerna bootstrap
-  - yarn lerna run test
+stages:
+  - bootstrap
+  - test
+  - name: publish
+    if: branch = master
+  - name: push
+    if: branch = master
+
+jobs:
+  include:
+    - stage: bootstrap
+      script: yarn lerna bootstrap
+    - stage: test
+      script: yarn lerna test
+    - stage: publish
+      script: lerna publish --canary --yes --npm-client=npm
