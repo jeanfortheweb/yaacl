@@ -1,8 +1,7 @@
 {
   "license": "ISC",
   "devDependencies": {
-    "lerna": "^2.8.0",
-    "jest": "^22.1.4"
+    "lerna": "^2.8.0"
   },
   "private": true,
   "workspaces": ["packages/*"]
