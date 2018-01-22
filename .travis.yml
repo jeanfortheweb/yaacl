@@ -3,8 +3,11 @@ cache: yarn
 node_js:
   - "lts/*"
 
+install:
+  - yarn install
+  - yarn lerna bootstrap
+
 stages:
-  - bootstrap
   - test
   - name: publish
     if: branch = master
@@ -13,9 +16,7 @@ stages:
 
 jobs:
   include:
-    - stage: bootstrap
-      script: yarn lerna bootstrap
     - stage: test
-      script: yarn lerna test
+      script: yarn lerna run test
     - stage: publish
-      script: lerna publish --canary --yes --npm-client=npm
+      script: yarn lerna publish --canary --yes --npm-client=npm
