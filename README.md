@@ -4,7 +4,7 @@ YAACL is a quiet simple and easy to learn ACL interface for node. With the possi
 
 ## How to use
 
-1. Install the yaacl core and an adapter of your choice
+1. Install the yaacl core and an adapter of your choice:
 
 ```sh
 yarn install @yaacl/core @yaacl/memory-adapter
