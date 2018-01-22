@@ -12,7 +12,7 @@ const objectIdentity: ObjectIdentity = {
 
 const adapter = create();
 
-describe('@yaacl/mongoose-storage', () => {
+describe('@yaacl/mongoose-adapter', () => {
   beforeAll(async () => {
     await connect('mongodb://localhost/mongoose-adapter-test');
     await connection.db.dropDatabase();
