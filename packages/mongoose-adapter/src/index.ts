@@ -17,11 +17,11 @@ const EntryModel = mongoose.model<EntryDocument>('__GUARDIAN__', EntrySchema);
 
 export const create = (): Adapter =>
   Object.freeze<Adapter>({
-    async store(
+    store: async (
       identity: SecurityIdentity,
       resource: ObjectIdentity,
       privileges: Privileges,
-    ): Promise<any> {
+    ): Promise<any> => {
       let entry = await EntryModel.findOne({
         identity: identity.getSecurityId(),
         resource: resource.getObjectId(),
@@ -39,7 +39,7 @@ export const create = (): Adapter =>
       await entry.save();
     },
 
-    async retrieve(identity: SecurityIdentity, resource: ObjectIdentity): Promise<Privileges> {
+    retrieve: async (identity: SecurityIdentity, resource: ObjectIdentity): Promise<Privileges> => {
       const entry = await EntryModel.findOne({
         identity: identity.getSecurityId(),
         resource: resource.getObjectId(),
@@ -48,7 +48,7 @@ export const create = (): Adapter =>
       return (entry && entry.privileges) || Privileges.NONE;
     },
 
-    async delete(identity: SecurityIdentity, resource?: ObjectIdentity): Promise<any> {
+    delete: async (identity: SecurityIdentity, resource?: ObjectIdentity): Promise<any> => {
       const conditions: any = {
         identity: identity.getSecurityId(),
       };

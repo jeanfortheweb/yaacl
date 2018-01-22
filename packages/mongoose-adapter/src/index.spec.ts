@@ -1,4 +1,5 @@
 import { ObjectIdentity, SecurityIdentity, Privileges } from '@yaacl/core';
+import { connect, connection } from 'mongoose';
 import { create } from './';
 
 const securityIdentity: SecurityIdentity = {
@@ -11,7 +12,14 @@ const objectIdentity: ObjectIdentity = {
 
 const adapter = create();
 
-describe('@yaacl/memory-storage', () => {
+describe('@yaacl/mongoose-storage', () => {
+  beforeAll(async () => {
+    await connect('mongodb://localhost/mongoose-adapter-test');
+    await connection.db.dropDatabase();
+  });
+
+  afterAll(async () => {});
+
   test('privileges to be initially undefined', async () => {
     expect(await adapter.retrieve(securityIdentity, objectIdentity)).toEqual(Privileges.NONE);
   });
