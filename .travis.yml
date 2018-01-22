@@ -21,6 +21,6 @@ jobs:
       before_install:
         
       script:
-        - npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN
+        - yarn config set //registry.npmjs.org/:_authToken $NPM_TOKEN
         - git checkout master
         - yarn lerna publish --yes --cd-version minor --npm-client=npm --force-publish
