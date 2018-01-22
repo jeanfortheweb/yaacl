@@ -9,6 +9,8 @@ install:
   - yarn install
   - yarn lerna bootstrap
 
+services: mongodb
+
 jobs:
   include:
     - stage: test
