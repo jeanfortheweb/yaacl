@@ -13,10 +13,10 @@ yarn install @yaacl/core @yaacl/memory-adapter
 2. Create a yaacl and use it.
 
 ```
-import { create, Privileges } from '@yaacl/core';
-import { adapter } from '@yaacl/memory-adapter';
+import { create as createYaacl, Privileges } from '@yaacl/core';
+import { create as createAdapter } from '@yaacl/memory-adapter';
 
-const yaacl = create(adapter());
+const yaacl = createYaacl(createAdapter());
 
 // a security identity could be a user
 const securityIdentity = {
