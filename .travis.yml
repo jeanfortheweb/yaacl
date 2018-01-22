@@ -1,13 +1,15 @@
+if: tag IS blank
+
 language: node_js
-cache: yarn
 node_js:
-  - "lts/*"
+  - "6"
+
+cache: yarn
 
 install:
   - yarn install
   - yarn lerna bootstrap
 
-if: tag IS blank
 script: yarn lerna run test
 
 jobs:
