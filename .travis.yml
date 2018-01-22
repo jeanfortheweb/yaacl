@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-  - "6"
+  - "lts/*"
 
 cache:
   yarn: true
@@ -18,7 +18,8 @@ jobs:
 
     - stage: publish
       if: tag IS blank AND branch = master AND type != pull_request
+      before_install:
+        - printf "//registry.npmjs.org/:_authToken=${NPM_TOKEN}\n" >> .npmrc 
       script:
-        - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc 
         - git checkout master
         - yarn lerna publish --yes --cd-version minor --npm-client=npm
