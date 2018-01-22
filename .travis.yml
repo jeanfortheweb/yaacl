@@ -4,6 +4,7 @@ node_js:
   - "lts/*"
 
 script:
+  - lerna bootstrap
   - cd ./packages
   - cd ./core && yarn test && cd ..
   - cd ./memory-adapter && yarn test && cd ..
