@@ -19,8 +19,8 @@ jobs:
     - stage: publish
       if: tag IS blank AND branch = master AND type != pull_request
       before_install:
-        - npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN
+        
       script:
-        - echo $NPM_TOKEN 
+        - npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN
         - git checkout master
-        - yarn lerna publish --yes --cd-version minor --npm-client=npm
+        - yarn lerna publish --yes --cd-version minor --npm-client=npm --force-publish
