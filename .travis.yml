@@ -7,14 +7,20 @@ install:
   - yarn install
   - yarn lerna bootstrap
 
+stages:
+  - name: test
+    if: tag IS blank
+
+  - name: publish
+    if: tag IS blank AND env(TRAVIS_BRANCH) = master
+  
+
 jobs:
   include:
     - stage: test
-      if: tag IS blank
       script: yarn lerna run test
 
     - stage: publish
-      if: tag IS blank AND env(TRAVIS_PULL_REQUEST) = false AND env(TRAVIS_BRANCH) = master
       script:
         - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc 
-        - yarn lerna publish --canary --yes --npm-client=npm -git-remote=$TRAVIS_BRANCH
+        - yarn lerna publish --yes --npm-client=npm
