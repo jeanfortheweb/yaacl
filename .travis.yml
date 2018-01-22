@@ -4,5 +4,5 @@ node_js:
   - "lts/*"
 
 script:
-  - yarn lerna -- bootstrap
-  - yarn lerna -- run test
+  - yarn lerna bootstrap
+  - yarn lerna run test
