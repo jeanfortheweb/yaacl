@@ -1,6 +1,6 @@
 {
   "name": "@yaacl/core",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Yet another ACL",
   "main": "es5/index.js",
   "types": "es5/index.d.ts",
