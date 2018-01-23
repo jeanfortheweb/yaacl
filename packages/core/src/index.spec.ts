@@ -66,64 +66,62 @@ const objectIdentity: ObjectIdentity = {
   getObjectId: () => 'object-1',
 };
 
-const guardian = create(mockAdapter);
+const yaacl = create(mockAdapter);
 
-describe('guardian', () => {
+describe('yaacl', () => {
   test('privileges to be initially NONE', async () => {
-    expect(await guardian.retrieve(securityIdentity, objectIdentity)).toEqual(Privileges.NONE);
+    expect(await yaacl.retrieve(securityIdentity, objectIdentity)).toEqual(Privileges.NONE);
   });
 
   test('privileges stored as expected', async () => {
-    await guardian.store(securityIdentity, objectIdentity, Privileges.CREATE);
+    await yaacl.store(securityIdentity, objectIdentity, Privileges.CREATE);
 
-    expect(await guardian.retrieve(securityIdentity, objectIdentity)).toEqual(Privileges.CREATE);
+    expect(await yaacl.retrieve(securityIdentity, objectIdentity)).toEqual(Privileges.CREATE);
   });
 
   test('privileges granted as expected', async () => {
-    await guardian.grant(securityIdentity, objectIdentity, Privileges.CREATE);
+    await yaacl.grant(securityIdentity, objectIdentity, Privileges.CREATE);
 
-    expect(await guardian.retrieve(securityIdentity, objectIdentity)).toEqual(Privileges.CREATE);
+    expect(await yaacl.retrieve(securityIdentity, objectIdentity)).toEqual(Privileges.CREATE);
 
-    await guardian.grant(securityIdentity, objectIdentity, Privileges.READ);
+    await yaacl.grant(securityIdentity, objectIdentity, Privileges.READ);
 
-    expect(await guardian.retrieve(securityIdentity, objectIdentity)).toEqual(
+    expect(await yaacl.retrieve(securityIdentity, objectIdentity)).toEqual(
       Privileges.CREATE | Privileges.READ,
     );
   });
 
   test('privileges denied as expected', async () => {
-    await guardian.deny(securityIdentity, objectIdentity, Privileges.CREATE);
+    await yaacl.deny(securityIdentity, objectIdentity, Privileges.CREATE);
 
-    expect(await guardian.retrieve(securityIdentity, objectIdentity)).toEqual(Privileges.READ);
+    expect(await yaacl.retrieve(securityIdentity, objectIdentity)).toEqual(Privileges.READ);
 
-    await guardian.deny(securityIdentity, objectIdentity, Privileges.READ);
+    await yaacl.deny(securityIdentity, objectIdentity, Privileges.READ);
 
-    expect(await guardian.retrieve(securityIdentity, objectIdentity)).toEqual(Privileges.NONE);
+    expect(await yaacl.retrieve(securityIdentity, objectIdentity)).toEqual(Privileges.NONE);
   });
 
   test('privileges compared as expected', async () => {
-    await guardian.store(securityIdentity, objectIdentity, Privileges.NONE);
-    await guardian.grant(securityIdentity, objectIdentity, Privileges.CREATE);
-    await guardian.deny(securityIdentity, objectIdentity, Privileges.REMOVE);
+    await yaacl.store(securityIdentity, objectIdentity, Privileges.NONE);
+    await yaacl.grant(securityIdentity, objectIdentity, Privileges.CREATE);
+    await yaacl.deny(securityIdentity, objectIdentity, Privileges.REMOVE);
 
-    expect(
-      await guardian.granted(securityIdentity, objectIdentity, Privileges.CREATE),
-    ).toBeTruthy();
+    expect(await yaacl.granted(securityIdentity, objectIdentity, Privileges.CREATE)).toBeTruthy();
 
-    expect(await guardian.granted(securityIdentity, objectIdentity, Privileges.REMOVE)).toBeFalsy();
+    expect(await yaacl.granted(securityIdentity, objectIdentity, Privileges.REMOVE)).toBeFalsy();
   });
 
   test('privileges deleted as expected', async () => {
-    await guardian.delete(securityIdentity, objectIdentity);
+    await yaacl.delete(securityIdentity, objectIdentity);
 
-    expect(await guardian.retrieve(securityIdentity, objectIdentity)).toEqual(Privileges.NONE);
+    expect(await yaacl.retrieve(securityIdentity, objectIdentity)).toEqual(Privileges.NONE);
 
-    await guardian.store(securityIdentity, objectIdentity, Privileges.CREATE);
+    await yaacl.store(securityIdentity, objectIdentity, Privileges.CREATE);
 
-    expect(await guardian.retrieve(securityIdentity, objectIdentity)).toEqual(Privileges.CREATE);
+    expect(await yaacl.retrieve(securityIdentity, objectIdentity)).toEqual(Privileges.CREATE);
 
-    await guardian.delete(securityIdentity);
+    await yaacl.delete(securityIdentity);
 
-    expect(await guardian.retrieve(securityIdentity, objectIdentity)).toEqual(Privileges.NONE);
+    expect(await yaacl.retrieve(securityIdentity, objectIdentity)).toEqual(Privileges.NONE);
   });
 });

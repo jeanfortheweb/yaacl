@@ -13,7 +13,7 @@ const EntrySchema = new mongoose.Schema({
   privileges: Number,
 });
 
-const EntryModel = mongoose.model<EntryDocument>('__GUARDIAN__', EntrySchema);
+const EntryModel = mongoose.model<EntryDocument>('__YACCL__', EntrySchema);
 
 export const create = (): Adapter =>
   Object.freeze<Adapter>({
