@@ -56,7 +56,6 @@ const mockAdapter: Adapter = {
 
     return Promise.resolve();
   },
-  },
 };
 
 const securityIdentity: SecurityIdentity = {
