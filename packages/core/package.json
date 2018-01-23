@@ -6,15 +6,14 @@
   "types": "es5/index.d.ts",
   "scripts": {
     "test": "jest",
+    "coverage":
+      "node --harmony_proxies node_modules/.bin/jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "prepublish": "tsc"
   },
   "publishConfig": {
     "access": "public"
   },
-  "keywords": [
-    "acl",
-    "security"
-  ],
+  "keywords": ["acl", "security"],
   "author": "jeanfortheweb",
   "repository": {
     "type": "git",
@@ -24,6 +23,7 @@
   "devDependencies": {
     "@types/jest": "^22.0.1",
     "@types/node": "^9.3.0",
+    "coveralls": "^3.0.0",
     "jest": "^22.1.4",
     "ts-jest": "^22.0.1",
     "typescript": "^2.6.2"
@@ -33,10 +33,7 @@
     "transform": {
       "^.+\\.ts$": "ts-jest"
     },
-    "moduleFileExtensions": [
-      "ts",
-      "js"
-    ],
+    "moduleFileExtensions": ["ts", "js"],
     "testRegex": "\\.spec\\.ts$",
     "mapCoverage": true
   }
