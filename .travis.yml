@@ -24,12 +24,10 @@ jobs:
       script: 
         - lerna run coverage
         - ./merge_lcov.sh ./packages ./lcov.info
-        - coveralls lcov.info
+        - cat lcov.info | coveralls 
 
     - stage: publish
       if: tag IS blank AND branch = master AND type != pull_request
-      before_install:
-        
       script:
         - npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN
         - lerna publish --yes --canary=pre --skip-git --npm-client=npm
