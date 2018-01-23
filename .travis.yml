@@ -26,4 +26,4 @@ jobs:
         - mkdir ~/.ssh
         - printf "${PUBLIC_KEY}" >> ~/.ssh/id_rsa.pub
         - git checkout master
-        - lerna publish --yes --cd-version patch --npm-client=npm --force-publish
+        - lerna publish --yes --canary=pre --skip-git --npm-client=npm --force-publish
