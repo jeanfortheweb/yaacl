@@ -28,6 +28,11 @@ describe('@yaacl/mongoose-adapter', () => {
     await adapter.store(securityIdentity, objectIdentity, Privileges.CREATE);
 
     expect(await adapter.retrieve(securityIdentity, objectIdentity)).toEqual(Privileges.CREATE);
+
+    // double call for find entry branch
+    await adapter.store(securityIdentity, objectIdentity, Privileges.CREATE);
+
+    expect(await adapter.retrieve(securityIdentity, objectIdentity)).toEqual(Privileges.CREATE);
   });
 
   test('privileges deleted as expected', async () => {
