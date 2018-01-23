@@ -1,6 +1,6 @@
 #!/bin/bash
 while read FILENAME; do
     LCOV_INPUT_FILES="$LCOV_INPUT_FILES -a \"$FILENAME\""
-done < <( find $1 -maxdepth 3 -name lcov.info )
+done < <( find ./packages -maxdepth 3 -name lcov.info )
 
-eval lcov "${LCOV_INPUT_FILES}" -o $1/$2
+eval lcov "${LCOV_INPUT_FILES}" -o ./lcov.info
