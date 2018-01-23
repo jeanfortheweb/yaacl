@@ -34,11 +34,24 @@ const mockAdapter: Adapter = {
     );
   },
 
-  delete(securityIdentity: SecurityIdentity, objectIdentity?: ObjectIdentity): Promise<any> {
-    if (objectIdentity) {
+  delete(securityIdentity?: SecurityIdentity, objectIdentity?: ObjectIdentity): Promise<any> {
+    if (securityIdentity && objectIdentity) {
       delete mockData[securityIdentity.getSecurityId()][objectIdentity.getObjectId()];
-    } else {
+    }
+
+    if (securityIdentity && !objectIdentity) {
       delete mockData[securityIdentity.getSecurityId()];
+    }
+
+    if (objectIdentity && !securityIdentity) {
+      Object.keys(mockData).forEach((securityId: string) => {
+        mockData[securityId] = Object.keys(mockData[securityId])
+          .filter((objectId: string) => objectId !== objectIdentity.getObjectId())
+          .reduce(
+            (nextData, objectId) => ({ ...nextData, [objectId]: mockData[securityId][objectId] }),
+            {},
+          );
+      });
     }
 
     return Promise.resolve();

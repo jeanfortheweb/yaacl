@@ -32,11 +32,24 @@ export const create = (): Adapter => {
       );
     },
 
-    delete(identity: SecurityIdentity, resource?: ObjectIdentity): Promise<any> {
-      if (resource) {
-        delete data[identity.getSecurityId()][resource.getObjectId()];
-      } else {
-        delete data[identity.getSecurityId()];
+    delete(securityIdentity?: SecurityIdentity, objectIdentity?: ObjectIdentity): Promise<any> {
+      if (securityIdentity && objectIdentity) {
+        delete data[securityIdentity.getSecurityId()][objectIdentity.getObjectId()];
+      }
+
+      if (securityIdentity && !objectIdentity) {
+        delete data[securityIdentity.getSecurityId()];
+      }
+
+      if (objectIdentity && !securityIdentity) {
+        Object.keys(data).forEach((securityId: string) => {
+          data[securityId] = Object.keys(data[securityId])
+            .filter((objectId: string) => objectId !== objectIdentity.getObjectId())
+            .reduce(
+              (nextData, objectId) => ({ ...nextData, [objectId]: data[securityId][objectId] }),
+              {},
+            );
+        });
       }
 
       return Promise.resolve();
