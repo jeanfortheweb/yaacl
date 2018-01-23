@@ -42,5 +42,13 @@ describe('@yaacl/mongoose-adapter', () => {
     await adapter.delete(securityIdentity);
 
     expect(await adapter.retrieve(securityIdentity, objectIdentity)).toEqual(Privileges.NONE);
+
+    await adapter.store(securityIdentity, objectIdentity, Privileges.CREATE);
+
+    expect(await adapter.retrieve(securityIdentity, objectIdentity)).toEqual(Privileges.CREATE);
+
+    await adapter.delete(undefined, objectIdentity);
+
+    expect(await adapter.retrieve(securityIdentity, objectIdentity)).toEqual(Privileges.NONE);
   });
 });
