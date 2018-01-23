@@ -10,7 +10,7 @@ export interface Adapter {
     objectIdentity: ObjectIdentity,
   ) => Promise<Privileges>;
 
-  delete: (securityIdentity: SecurityIdentity, objectIdentity?: ObjectIdentity) => Promise<any>;
+  delete: (securityIdentity?: SecurityIdentity, objectIdentity?: ObjectIdentity) => Promise<any>;
 }
 
 export interface Instance {
@@ -37,7 +37,10 @@ export interface Instance {
     privileges: Privileges,
   ) => Promise<any>;
 
-  delete: (securityIdentity: SecurityIdentity, objectIdentity?: ObjectIdentity) => Promise<any>;
+  delete: (
+    identityA: SecurityIdentity | ObjectIdentity,
+    identityB?: SecurityIdentity | ObjectIdentity,
+  ) => Promise<any>;
 
   granted: (
     securityIdentity: SecurityIdentity,
@@ -64,6 +67,12 @@ export enum Privileges {
   ALL = READ | WRITE | CREATE | REMOVE | UPDATE,
 }
 
+export const isObjectIdentity = (value: any): value is ObjectIdentity =>
+  typeof (<ObjectIdentity>value).getObjectId === 'function';
+
+export const isSecurityIdentity = (value: any): value is SecurityIdentity =>
+  typeof (<SecurityIdentity>value).getSecurityId === 'function';
+
 export const create = (adapter: Adapter): Instance => {
   const store = async (
     securityIdentity: SecurityIdentity,
@@ -89,9 +98,25 @@ export const create = (adapter: Adapter): Instance => {
     );
 
   const _delete = async (
-    securityIdentity: SecurityIdentity,
-    objectIdentity?: ObjectIdentity,
-  ): Promise<any> => adapter.delete(securityIdentity, objectIdentity);
+    identityA: SecurityIdentity | ObjectIdentity,
+    identityB?: SecurityIdentity | ObjectIdentity,
+  ): Promise<any> => {
+    if (isSecurityIdentity(identityA) && !identityB) {
+      return adapter.delete(identityA, identityB);
+    }
+
+    if (isObjectIdentity(identityA) && !identityB) {
+      return adapter.delete(identityB, identityA);
+    }
+
+    if (isSecurityIdentity(identityA) && isObjectIdentity(identityB)) {
+      return adapter.delete(identityA, identityB);
+    }
+
+    throw new Error(
+      'Invalid combination of arguments. You can either pass a single SecurityIdentity, a single ObjectIdentity or a SecurityIdentity and an ObjectIdentity in order.',
+    );
+  };
 
   const deny = async (
     securityIdentity: SecurityIdentity,
