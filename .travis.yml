@@ -23,5 +23,7 @@ jobs:
         
       script:
         - npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN
+        - mkdir ~/.ssh
+        - printf "${PUBLIC_KEY}" >> ~/.ssh/id_rsa.pub
         - git checkout master
         - lerna publish --yes --cd-version patch --npm-client=npm --force-publish
