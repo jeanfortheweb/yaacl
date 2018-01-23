@@ -15,7 +15,7 @@ services: mongodb
 jobs:
   include:
     - stage: test
-      script: lerna run test
+      script: lerna run coverage
 
     - stage: publish
       if: tag IS blank AND branch = master AND type != pull_request
