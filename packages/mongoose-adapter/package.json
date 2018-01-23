@@ -6,8 +6,7 @@
   "types": "es5/index.d.ts",
   "scripts": {
     "test": "jest --forceExit",
-    "coverage":
-      "node node_modules/.bin/jest --coverage --forceExit && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "coverage": "jest --coverage --forceExit",
     "prepublish": "tsc"
   },
   "publishConfig": {
@@ -24,7 +23,6 @@
     "@types/jest": "^22.0.1",
     "@types/mongoose": "^4.7.33",
     "@types/node": "^9.3.0",
-    "coveralls": "^3.0.0",
     "jest": "^22.1.4",
     "ts-jest": "^22.0.1",
     "typescript": "^2.6.2"

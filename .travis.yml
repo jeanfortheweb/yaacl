@@ -5,9 +5,13 @@ node_js:
 cache:
   yarn: true
 
+before_install:
+  - sudo apt-get -qq update
+  - apt-get -y lcov
+
 install:
   - yarn install
-  - yarn global add lerna
+  - yarn global add lerna coveralls
   - lerna bootstrap
 
 services: mongodb
@@ -15,7 +19,10 @@ services: mongodb
 jobs:
   include:
     - stage: test
-      script: lerna run coverage
+      script: 
+        - lerna run coverage
+        - ./merge_lcov.sh ./packages ./lcov.info
+        - coveralls lcov.info
 
     - stage: publish
       if: tag IS blank AND branch = master AND type != pull_request
