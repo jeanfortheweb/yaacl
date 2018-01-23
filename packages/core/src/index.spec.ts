@@ -123,5 +123,19 @@ describe('yaacl', () => {
     await yaacl.delete(securityIdentity);
 
     expect(await yaacl.retrieve(securityIdentity, objectIdentity)).toEqual(Privileges.NONE);
+
+    await yaacl.store(securityIdentity, objectIdentity, Privileges.CREATE);
+
+    expect(await yaacl.retrieve(securityIdentity, objectIdentity)).toEqual(Privileges.CREATE);
+
+    await yaacl.delete(objectIdentity);
+
+    expect(await yaacl.retrieve(securityIdentity, objectIdentity)).toEqual(Privileges.NONE);
+  });
+
+  test('privileges are not deleted with invalid arguments', async () => {
+    expect(yaacl.delete(objectIdentity, securityIdentity)).rejects.toBeTruthy();
+    expect(yaacl.delete(securityIdentity, securityIdentity)).rejects.toBeTruthy();
+    expect(yaacl.delete(objectIdentity, objectIdentity)).rejects.toBeTruthy();
   });
 });
