@@ -9,6 +9,10 @@ const objectIdentity: ObjectIdentity = {
   getObjectId: () => `resource-empty-1`,
 };
 
+const objectIdentity2: ObjectIdentity = {
+  getObjectId: () => `resource-empty-2`,
+};
+
 const adapter = create();
 
 describe('@yaacl/memory-storage', () => {
@@ -36,11 +40,14 @@ describe('@yaacl/memory-storage', () => {
     expect(await adapter.retrieve(securityIdentity, objectIdentity)).toEqual(Privileges.NONE);
 
     await adapter.store(securityIdentity, objectIdentity, Privileges.CREATE);
+    await adapter.store(securityIdentity, objectIdentity2, Privileges.CREATE);
 
     expect(await adapter.retrieve(securityIdentity, objectIdentity)).toEqual(Privileges.CREATE);
+    expect(await adapter.retrieve(securityIdentity, objectIdentity2)).toEqual(Privileges.CREATE);
 
     await adapter.delete(undefined, objectIdentity);
 
     expect(await adapter.retrieve(securityIdentity, objectIdentity)).toEqual(Privileges.NONE);
+    expect(await adapter.retrieve(securityIdentity, objectIdentity2)).toEqual(Privileges.CREATE);
   });
 });
