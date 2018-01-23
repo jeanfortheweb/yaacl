@@ -68,10 +68,10 @@ export enum Privileges {
 }
 
 export const isObjectIdentity = (value: any): value is ObjectIdentity =>
-  typeof (<ObjectIdentity>value).getObjectId === 'function';
+  value && typeof (<ObjectIdentity>value).getObjectId === 'function';
 
 export const isSecurityIdentity = (value: any): value is SecurityIdentity =>
-  typeof (<SecurityIdentity>value).getSecurityId === 'function';
+  value && typeof (<SecurityIdentity>value).getSecurityId === 'function';
 
 export const create = (adapter: Adapter): Instance => {
   const store = async (
