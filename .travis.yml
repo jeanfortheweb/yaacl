@@ -13,7 +13,7 @@ before_install:
 
 install:
   - yarn install
-  - yarn global add lerna coveralls
+  - yarn global add lerna codecov
   - lerna bootstrap
 
 services: mongodb
@@ -24,7 +24,7 @@ jobs:
       script: 
         - lerna run coverage
         - ./merge_lcov.sh
-        - cat ./lcov.info | coveralls 
+        - codecov
 
     - stage: publish
       if: tag IS blank AND branch = master AND type != pull_request
