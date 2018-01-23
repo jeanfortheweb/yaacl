@@ -23,4 +23,4 @@ jobs:
         
       script:
         - npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN
-        - lerna publish --yes --canary=pre --skip-git --npm-client=npm --force-publish
+        - lerna publish --yes --canary=pre --skip-git --npm-client=npm
