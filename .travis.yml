@@ -24,7 +24,8 @@ jobs:
       script: 
         - lerna run coverage
         - ./merge_lcov.sh ./packages ./lcov.info
-        - cat lcov.info | coveralls 
+        - cat ./lcov.info
+        - cat ./lcov.info | coveralls 
 
     - stage: publish
       if: tag IS blank AND branch = master AND type != pull_request
