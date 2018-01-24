@@ -27,8 +27,8 @@ export enum Privileges {
   WRITE = 2,
   CREATE = 4,
   REMOVE = 8,
-  UPDATE = 16,
-  ALL = READ | WRITE | CREATE | REMOVE | UPDATE,
+  OWNER = 16,
+  ALL = READ | WRITE | CREATE | REMOVE | OWNER,
 }
 
 export class Yaacl {
