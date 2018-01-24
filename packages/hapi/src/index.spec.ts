@@ -1,10 +1,9 @@
 import * as Hapi from 'hapi';
 import plugin from './';
-import { Yaacl, Privileges, SecurityIdentity } from '@yaacl/core';
+import { Privileges, SecurityIdentity } from '@yaacl/core';
 import { MemoryAdapter } from '@yaacl/memory-adapter';
 
 describe('@yaacl/hapi', () => {
-  const yaacl: Yaacl = new Yaacl(new MemoryAdapter());
   const server: any = Hapi.server({
     port: 8080,
   });
@@ -42,7 +41,7 @@ describe('@yaacl/hapi', () => {
     await server.register({
       plugin,
       options: {
-        api: yaacl,
+        adapter: new MemoryAdapter(),
         securityIdentityResolver,
       },
     });

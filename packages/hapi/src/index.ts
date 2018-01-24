@@ -1,9 +1,9 @@
-import { Yaacl, SecurityIdentity, ObjectIdentity, Privileges } from '@yaacl/core';
+import { Yaacl, Adapter, SecurityIdentity, ObjectIdentity, Privileges } from '@yaacl/core';
 import { unauthorized, forbidden } from 'boom';
 import * as Joi from 'joi';
 
 export interface PluginOptions {
-  api: Yaacl;
+  adapter: Adapter;
   securityIdentityResolver: (request: any) => SecurityIdentity | SecurityIdentity[];
 }
 
@@ -16,7 +16,7 @@ export class Plugin {
   }
 
   private static schema = Joi.object().keys({
-    api: Joi.required(),
+    adapter: Joi.object().required(),
     securityIdentityResolver: Joi.func().required(),
   });
 
@@ -28,13 +28,15 @@ export class Plugin {
 
   private server: any;
   private options: PluginOptions;
+  private yaacl: Yaacl;
 
   private constructor(server: any, options: PluginOptions) {
     this.options = options;
+    this.yaacl = new Yaacl(this.options.adapter);
 
     this.server = server;
     this.server.ext('onPostAuth', this.onPostAuth.bind(this));
-    this.server.expose('api', this.options.api);
+    this.server.expose('api', this.yaacl);
   }
 
   private async getSecurityIdentityArray(request: any) {
@@ -77,7 +79,7 @@ export class Plugin {
     let granted = false;
 
     while (granted === false && index < securityIdentity.length) {
-      granted = await this.options.api.granted(securityIdentity[index], objectIdentity, privileges);
+      granted = await this.yaacl.granted(securityIdentity[index], objectIdentity, privileges);
       index++;
     }
 
