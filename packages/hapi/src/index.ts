@@ -105,6 +105,7 @@ class Plugin {
 
 export default {
   name: 'yaacl',
+  // tslint:disable-next-line: no-require-imports
   version: require('../package.json').version,
   register: Plugin.register,
 };
