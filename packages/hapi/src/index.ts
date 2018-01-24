@@ -3,8 +3,8 @@ import { unauthorized, forbidden } from 'boom';
 import * as Joi from 'joi';
 
 type Resolvers = {
-  objectIdentityResolver: (request: any) => ObjectIdentity;
   securityIdentityResolver: (request: any) => SecurityIdentity | SecurityIdentity[];
+  objectIdentityResolver: (request: any) => ObjectIdentity;
 };
 
 type PluginOptions = {
@@ -17,8 +17,10 @@ class Plugin {
 
   private static schema = Joi.object().keys({
     instance: Joi.required(),
-    identityResolver: Joi.func().required(),
-    resourceResolver: Joi.func().required(),
+    resolvers: {
+      securityIdentityResolver: Joi.func().required(),
+      objectIdentityResolver: Joi.func().required(),
+    },
   });
 
   private static isIdentityArray(
