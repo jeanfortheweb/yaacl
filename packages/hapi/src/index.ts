@@ -37,6 +37,7 @@ export class Plugin {
     this.server = server;
     this.server.ext('onPostAuth', this.onPostAuth.bind(this));
     this.server.expose('api', this.yaacl);
+    this.server.expose('getRouteIdentity', this.getRouteIdentity.bind(this));
   }
 
   private async getSecurityIdentityArray(request: any) {
@@ -53,8 +54,8 @@ export class Plugin {
     return securityIdentity;
   }
 
-  private getObjectIdentity(request: any) {
-    const options = request.route.settings.plugins.yaacl;
+  private getRouteIdentity(route: any) {
+    const options = route.settings.plugins.yaacl;
     let objectIdentity: ObjectIdentity;
 
     if (options && options.group) {
@@ -63,7 +64,7 @@ export class Plugin {
       };
     } else {
       objectIdentity = {
-        getObjectId: () => `${request.route.method}:${request.route.path}`,
+        getObjectId: () => `${route.method}:${route.path}`,
       };
     }
 
@@ -91,7 +92,7 @@ export class Plugin {
 
     if (options && options.privileges) {
       const securityIdentity = await this.getSecurityIdentityArray(request);
-      const objectIdentity = this.getObjectIdentity(request);
+      const objectIdentity = this.getRouteIdentity(request);
 
       if (!await this.isGranted(securityIdentity, objectIdentity, options.privileges)) {
         throw forbidden();
