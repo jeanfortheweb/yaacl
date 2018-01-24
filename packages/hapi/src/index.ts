@@ -1,4 +1,4 @@
-import { Yaacl, SecurityIdentity, ObjectIdentity } from '@yaacl/core';
+import { Yaacl, SecurityIdentity, ObjectIdentity, Privileges } from '@yaacl/core';
 import { unauthorized, forbidden } from 'boom';
 import * as Joi from 'joi';
 
@@ -66,6 +66,27 @@ class Plugin {
     return securityIdentity;
   }
 
+  private async isGranted(
+    securityIdentity: SecurityIdentity[],
+    objectIdentity: ObjectIdentity,
+    privileges: Privileges,
+  ) {
+    let index = 0;
+    let granted = false;
+
+    while (granted === false && index < securityIdentity.length) {
+      granted = await this.options.yaacl.granted(
+        securityIdentity[index],
+        objectIdentity,
+        privileges,
+      );
+
+      index++;
+    }
+
+    return granted;
+  }
+
   private async onPostAuth(request, h) {
     const options = request.route.settings.plugins.yaacl;
 
@@ -73,20 +94,7 @@ class Plugin {
       const securityIdentity = await this.getSecurityIdentityArray(request);
       const objectIdentity = await this.options.resolvers.objectIdentityResolver(request);
 
-      let index = 0;
-      let granted = false;
-
-      while (granted === false && index < securityIdentity.length) {
-        granted = await this.options.yaacl.granted(
-          securityIdentity[index],
-          objectIdentity,
-          options.privileges,
-        );
-
-        index++;
-      }
-
-      if (!granted) {
+      if (!this.isGranted(securityIdentity, objectIdentity, options.privileges)) {
         throw forbidden();
       }
     }
