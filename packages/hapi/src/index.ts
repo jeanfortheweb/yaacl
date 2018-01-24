@@ -8,7 +8,7 @@ export interface Resolvers {
 }
 
 export interface PluginOptions {
-  yaacl: Yaacl;
+  api: Yaacl;
   resolvers: Resolvers;
 }
 
@@ -29,7 +29,7 @@ class Plugin {
   private static instance: Plugin;
 
   private static schema = Joi.object().keys({
-    instance: Joi.required(),
+    api: Joi.required(),
     resolvers: {
       securityIdentityResolver: Joi.func().required(),
       objectIdentityResolver: Joi.func().required(),
@@ -46,10 +46,11 @@ class Plugin {
   private options: PluginOptions;
 
   private constructor(server: any, options: PluginOptions) {
+    this.options = options;
+
     this.server = server;
     this.server.ext('onPostAuth', this.onPostAuth.bind(this));
-    this.server.expose('api', this.options.yaacl);
-    this.options = options;
+    this.server.expose('api', this.options.api);
   }
 
   private async getSecurityIdentityArray(request: any) {
@@ -75,12 +76,7 @@ class Plugin {
     let granted = false;
 
     while (granted === false && index < securityIdentity.length) {
-      granted = await this.options.yaacl.granted(
-        securityIdentity[index],
-        objectIdentity,
-        privileges,
-      );
-
+      granted = await this.options.api.granted(securityIdentity[index], objectIdentity, privileges);
       index++;
     }
 
@@ -94,7 +90,7 @@ class Plugin {
       const securityIdentity = await this.getSecurityIdentityArray(request);
       const objectIdentity = await this.options.resolvers.objectIdentityResolver(request);
 
-      if (!this.isGranted(securityIdentity, objectIdentity, options.privileges)) {
+      if (!await this.isGranted(securityIdentity, objectIdentity, options.privileges)) {
         throw forbidden();
       }
     }
