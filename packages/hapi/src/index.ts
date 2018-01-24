@@ -2,17 +2,30 @@ import { Yaacl, SecurityIdentity, ObjectIdentity } from '@yaacl/core';
 import { unauthorized, forbidden } from 'boom';
 import * as Joi from 'joi';
 
-type Resolvers = {
+export interface Resolvers {
   securityIdentityResolver: (request: any) => SecurityIdentity | SecurityIdentity[];
   objectIdentityResolver: (request: any) => ObjectIdentity;
-};
+}
 
-type PluginOptions = {
+export interface PluginOptions {
   yaacl: Yaacl;
   resolvers: Resolvers;
-};
+}
 
 class Plugin {
+  public static register(server: any, options: PluginOptions) {
+    if (Plugin.instance) {
+      throw new Error(
+        'Yaacl has already been registered. Multiple registrations are not supported.',
+      );
+    }
+
+    Plugin.instance = new Plugin(
+      server,
+      Joi.attempt<PluginOptions>(options, Plugin.schema, 'Invalid options'),
+    );
+  }
+
   private static instance: Plugin;
 
   private static schema = Joi.object().keys({
@@ -29,19 +42,6 @@ class Plugin {
     return Array.isArray(identity);
   }
 
-  public static register(server: any, options: PluginOptions) {
-    if (Plugin.instance) {
-      throw new Error(
-        'Yaacl has already been registered. Multiple registrations are not supported.',
-      );
-    }
-
-    Plugin.instance = new Plugin(
-      server,
-      Joi.attempt<PluginOptions>(options, Plugin.schema, 'Invalid options'),
-    );
-  }
-
   private server: any;
   private options: PluginOptions;
 
@@ -52,38 +52,42 @@ class Plugin {
     this.options = options;
   }
 
+  private async getSecurityIdentityArray(request: any) {
+    const securityIdentity = await this.options.resolvers.securityIdentityResolver(request);
+
+    if (!securityIdentity) {
+      throw unauthorized();
+    }
+
+    if (!Plugin.isIdentityArray(securityIdentity)) {
+      return [securityIdentity];
+    }
+
+    return securityIdentity;
+  }
+
   private async onPostAuth(request, h) {
     const options = request.route.settings.plugins.yaacl;
-    let allowed = false;
 
     if (options && options.privileges) {
-      const securityIdentity = this.options.resolvers.securityIdentityResolver(request);
-      const objectIdentity = this.options.resolvers.objectIdentityResolver(request);
+      const securityIdentity = await this.getSecurityIdentityArray(request);
+      const objectIdentity = await this.options.resolvers.objectIdentityResolver(request);
 
-      if (!securityIdentity) {
-        throw unauthorized();
-      }
+      let index = 0;
+      let granted = false;
 
-      if (Plugin.isIdentityArray(securityIdentity)) {
-        let index = 0;
-
-        while (allowed === false && index < securityIdentity.length) {
-          allowed = await this.options.yaacl.granted(
-            securityIdentity[index],
-            objectIdentity,
-            options.privileges,
-          );
-        }
-      } else {
-        allowed = await this.options.yaacl.granted(
-          securityIdentity,
+      while (granted === false && index < securityIdentity.length) {
+        granted = await this.options.yaacl.granted(
+          securityIdentity[index],
           objectIdentity,
           options.privileges,
         );
+
+        index++;
       }
 
-      if (!allowed) {
-        return forbidden();
+      if (!granted) {
+        throw forbidden();
       }
     }
 
