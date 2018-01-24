@@ -12,27 +12,21 @@ export interface PluginOptions {
   resolvers: Resolvers;
 }
 
-class Plugin {
+export class Plugin {
   public static register(server: any, options: PluginOptions) {
-    if (Plugin.instance) {
-      throw new Error(
-        'Yaacl has already been registered. Multiple registrations are not supported.',
-      );
-    }
-
-    Plugin.instance = new Plugin(
+    return new Plugin(
       server,
       Joi.attempt<PluginOptions>(options, Plugin.schema, 'Invalid options'),
     );
   }
 
-  private static instance: Plugin;
-
   private static schema = Joi.object().keys({
     api: Joi.required(),
     resolvers: {
       securityIdentityResolver: Joi.func().required(),
-      objectIdentityResolver: Joi.func().required(),
+      objectIdentityResolver: Joi.func().default((request: any) => ({
+        getObjectId: () => request.route.path,
+      })),
     },
   });
 
