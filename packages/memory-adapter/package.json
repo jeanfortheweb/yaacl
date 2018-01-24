@@ -7,16 +7,12 @@
   "scripts": {
     "test": "jest",
     "coverage": "jest --coverage",
-    "prepublish": "tsc"
+    "prepublish": "tsc --p ./tsconfig.publish.json"
   },
   "publishConfig": {
     "access": "public"
   },
-  "keywords": [
-    "acl",
-    "security",
-    "adapter"
-  ],
+  "keywords": ["acl", "security", "adapter"],
   "author": "jeanfortheweb",
   "repository": {
     "type": "git",
@@ -35,10 +31,7 @@
     "transform": {
       "^.+\\.ts$": "ts-jest"
     },
-    "moduleFileExtensions": [
-      "ts",
-      "js"
-    ],
+    "moduleFileExtensions": ["ts", "js"],
     "testRegex": "\\.spec\\.ts$",
     "mapCoverage": true
   },
