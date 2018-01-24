@@ -39,6 +39,7 @@ jobs:
         - codecov
       after_script:
         - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+        - ./cc-test-reporter upload-coverage -i ./lcov.info
 
     - stage: publish
       if: branch = master AND type != pull_request
