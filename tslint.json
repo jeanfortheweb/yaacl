@@ -1,6 +1,5 @@
 {
   "extends": "tslint:latest",
-  "rulesDirectory": "built/local/tslint/rules",
   "rules": {
     "array-type": [true, "array"],
     "boolean-trivia": true,

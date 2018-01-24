@@ -1,7 +1,6 @@
 {
   "license": "MIT",
   "devDependencies": {
-    "lerna": "^2.8.0",
-    "tslint": "^5.9.1"
+    "lerna": "^2.8.0"
   }
 }
