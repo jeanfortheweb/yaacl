@@ -71,7 +71,7 @@ describe('@yaacl/hapi', () => {
 
     securityIdentityResolver.mockReturnValueOnce(securityIdentityArray);
 
-    await yaacl.grant(
+    await server.plugins.yaacl.api.grant(
       securityIdentityArray[1],
       { getObjectId: () => 'GET:/secured' },
       Privileges.READ,
