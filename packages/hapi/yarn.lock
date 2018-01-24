@@ -14,6 +14,10 @@
   version "22.1.0"
   resolved "https://registry.yarnpkg.com/@types/jest/-/jest-22.1.0.tgz#c1de03bbac66fac4cc741f7a69cb73bc01a1707c"
 
+"@types/joi@^13.0.5":
+  version "13.0.5"
+  resolved "https://registry.yarnpkg.com/@types/joi/-/joi-13.0.5.tgz#50829402204e8fec8ee287eeb37d79fbff34913c"
+
 "@types/node@^9.3.0":
   version "9.3.0"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-9.3.0.tgz#3a129cda7c4e5df2409702626892cb4b96546dd5"
@@ -21,6 +25,12 @@
 "@yaacl/core@^0.4.0":
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/@yaacl/core/-/core-0.4.0.tgz#5f07dd724281b6f5b3786cc8ee588d46860e8783"
+
+"@yaacl/memory-adapter@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@yaacl/memory-adapter/-/memory-adapter-0.4.0.tgz#ff8d3e4f1252946a110dc1864704dc04f96d0243"
+  dependencies:
+    "@yaacl/core" "^0.4.0"
 
 abab@^1.0.4:
   version "1.0.4"
