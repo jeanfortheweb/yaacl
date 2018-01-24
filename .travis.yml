@@ -26,14 +26,14 @@ jobs:
         - lerna run test
 
     - stage: coverage
-      if: tag IS blank AND branch = master AND type != pull_request 
+      if: branch = master AND type != pull_request 
       script: 
         - lerna run coverage
         - ./merge_lcov.sh
         - codecov
 
     - stage: publish
-      if: tag IS blank AND branch = master AND type != pull_request
+      if: branch = master AND type != pull_request
       script:
         - npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN
         - lerna publish --yes --canary=pre --skip-git --npm-client=npm
