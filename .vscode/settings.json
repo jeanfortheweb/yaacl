@@ -1,7 +1,6 @@
 {
   "tslint.enable": true,
   "editor.formatOnSave": true,
-  "editor.minimap.enabled": false,
   "prettier.singleQuote": true,
   "prettier.tabWidth": 2,
   "prettier.trailingComma": "all",
