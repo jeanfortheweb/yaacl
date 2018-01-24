@@ -1,6 +1,6 @@
 import { ObjectIdentity, SecurityIdentity, Privileges } from '@yaacl/core';
 import { connect, connection } from 'mongoose';
-import { create } from './';
+import { MongooseAdapter } from './';
 
 const securityIdentity: SecurityIdentity = {
   getSecurityId: () => `identity-user-1`,
@@ -10,7 +10,7 @@ const objectIdentity: ObjectIdentity = {
   getObjectId: () => `resource-empty-1`,
 };
 
-const adapter = create();
+const adapter = new MongooseAdapter();
 
 describe('@yaacl/mongoose-adapter', () => {
   beforeAll(async () => {
