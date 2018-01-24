@@ -1,1 +1,3 @@
-test('todo', async () => {});
+test('todo', async () => {
+  expect(true).toBeTruthy();
+});
