@@ -3,6 +3,10 @@ language: node_js
 node_js:
   - "lts/*"
 
+env:
+  global:
+    - CC_TEST_REPORTER_ID=6f2f009eb3da97e8fa65026915c7c88c89e46da2c29c028565814747358ca2a3
+
 cache:
   yarn: true
 
