@@ -1,0 +1,15 @@
+{
+  "tslint.enable": true,
+  "editor.formatOnSave": true,
+  "editor.minimap.enabled": false,
+  "prettier.singleQuote": true,
+  "prettier.tabWidth": 2,
+  "prettier.trailingComma": "all",
+  "prettier.printWidth": 100,
+  "files.exclude": {
+    "**/node_modules/": true,
+    "**/yarn.lock": true,
+    ".vscode": true,
+    "**/es5/": true
+  }
+}
