@@ -6,12 +6,6 @@ node_js:
 cache:
   yarn: true
 
-before_install:
-  - wget http://downloads.sourceforge.net/ltp/lcov-1.13.tar.gz
-  - tar -xvf lcov-1.13.tar.gz
-  - cd lcov-1.13 && sudo make install
-  - cd ..
-
 install:
   - yarn install
   - yarn global add lerna codecov
@@ -26,11 +20,21 @@ jobs:
         - lerna run test
 
     - stage: coverage
-      if: branch = master AND type != pull_request 
+      if: branch = master AND type != pull_request
+      before_script:
+        - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+        - chmod +x ./cc-test-reporter
+        - ./cc-test-reporter before-build
+        - wget http://downloads.sourceforge.net/ltp/lcov-1.13.tar.gz
+        - tar -xvf lcov-1.13.tar.gz
+        - cd lcov-1.13 && sudo make install
+        - cd ..
       script: 
         - lerna run coverage
         - ./merge_lcov.sh
         - codecov
+      after_script:
+        - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 
     - stage: publish
       if: branch = master AND type != pull_request
