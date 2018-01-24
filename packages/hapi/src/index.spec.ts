@@ -43,9 +43,7 @@ describe('@yaacl/hapi', () => {
       plugin,
       options: {
         api: yaacl,
-        resolvers: {
-          securityIdentityResolver,
-        },
+        securityIdentityResolver,
       },
     });
   });
@@ -74,7 +72,11 @@ describe('@yaacl/hapi', () => {
 
     securityIdentityResolver.mockReturnValueOnce(securityIdentityArray);
 
-    await yaacl.grant(securityIdentityArray[1], { getObjectId: () => '/secured' }, Privileges.READ);
+    await yaacl.grant(
+      securityIdentityArray[1],
+      { getObjectId: () => 'GET:/secured' },
+      Privileges.READ,
+    );
 
     assertStatusCode('/secured', 200);
   });
