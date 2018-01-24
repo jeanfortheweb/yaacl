@@ -1,4 +1,4 @@
-import { create, ObjectIdentity, SecurityIdentity, Privileges, Adapter } from './index';
+import { Yaacl, ObjectIdentity, SecurityIdentity, Privileges, Adapter } from './index';
 
 const mockData: {
   [securityIdentity: string]: {
@@ -66,7 +66,7 @@ const objectIdentity: ObjectIdentity = {
   getObjectId: () => 'object-1',
 };
 
-const yaacl = create(mockAdapter);
+const yaacl = new Yaacl(mockAdapter);
 
 describe('yaacl', () => {
   test('privileges to be initially NONE', async () => {
