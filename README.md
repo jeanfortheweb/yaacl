@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/jeanfortheweb/yaacl.svg?branch=master)](https://travis-ci.org/jeanfortheweb/yaacl)
 [![codecov](https://codecov.io/gh/jeanfortheweb/yaacl/branch/master/graph/badge.svg)](https://codecov.io/gh/jeanfortheweb/yaacl)
+[![Maintainability](https://api.codeclimate.com/v1/badges/ad51f3d8bbfa8ae53026/maintainability)](https://codeclimate.com/github/jeanfortheweb/yaacl/maintainability)
 
 YAACL is a quiet simple and easy to learn ACL interface for node. With the possibility for custom adapters and an abstract but yet simple API it can be integrated in any service that needs a little more than just roles to manage access.
 
