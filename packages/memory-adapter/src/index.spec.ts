@@ -1,5 +1,5 @@
 import { ObjectIdentity, SecurityIdentity, Privileges } from '@yaacl/core';
-import { create } from './';
+import { MemoryAdapter } from './';
 
 const securityIdentity: SecurityIdentity = {
   getSecurityId: () => `identity-user-1`,
@@ -13,7 +13,7 @@ const objectIdentity2: ObjectIdentity = {
   getObjectId: () => `resource-empty-2`,
 };
 
-const adapter = create();
+const adapter = new MemoryAdapter();
 
 describe('@yaacl/memory-storage', () => {
   test('privileges to be initially undefined', async () => {

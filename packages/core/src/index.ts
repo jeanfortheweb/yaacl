@@ -13,42 +13,6 @@ export interface Adapter {
   delete: (securityIdentity?: SecurityIdentity, objectIdentity?: ObjectIdentity) => Promise<any>;
 }
 
-export interface Instance {
-  store: (
-    securityIdentity: SecurityIdentity,
-    objectIdentity: ObjectIdentity,
-    privileges: Privileges,
-  ) => Promise<any>;
-
-  retrieve: (
-    securityIdentity: SecurityIdentity,
-    objectIdentity: ObjectIdentity,
-  ) => Promise<Privileges>;
-
-  grant: (
-    securityIdentity: SecurityIdentity,
-    objectIdentity: ObjectIdentity,
-    privileges: Privileges,
-  ) => Promise<any>;
-
-  deny: (
-    securityIdentity: SecurityIdentity,
-    objectIdentity: ObjectIdentity,
-    privileges: Privileges,
-  ) => Promise<any>;
-
-  delete: (
-    identityA: SecurityIdentity | ObjectIdentity,
-    identityB?: SecurityIdentity | ObjectIdentity,
-  ) => Promise<any>;
-
-  granted: (
-    securityIdentity: SecurityIdentity,
-    objectIdentity: ObjectIdentity,
-    privileges: Privileges,
-  ) => Promise<boolean>;
-}
-
 export interface ObjectIdentity {
   getObjectId: () => string;
 }
@@ -63,85 +27,90 @@ export enum Privileges {
   WRITE = 2,
   CREATE = 4,
   REMOVE = 8,
-  UPDATE = 16,
-  ALL = READ | WRITE | CREATE | REMOVE | UPDATE,
+  OWNER = 16,
+  ALL = READ | WRITE | CREATE | REMOVE | OWNER,
 }
 
-export const isObjectIdentity = (value: any): value is ObjectIdentity =>
-  value && typeof (<ObjectIdentity>value).getObjectId === 'function';
+export class Yaacl {
+  public static isObjectIdentity(value: any): value is ObjectIdentity {
+    return value && typeof (<ObjectIdentity>value).getObjectId === 'function';
+  }
 
-export const isSecurityIdentity = (value: any): value is SecurityIdentity =>
-  value && typeof (<SecurityIdentity>value).getSecurityId === 'function';
+  public static isSecurityIdentity(value: any): value is SecurityIdentity {
+    return value && typeof (<SecurityIdentity>value).getSecurityId === 'function';
+  }
 
-export const create = (adapter: Adapter): Instance => {
-  const store = async (
+  private adapter: Adapter;
+
+  constructor(adapter: Adapter) {
+    this.adapter = adapter;
+  }
+
+  public async store(
     securityIdentity: SecurityIdentity,
     objectIdentity: ObjectIdentity,
     privileges: Privileges,
-  ): Promise<any> => await adapter.store(securityIdentity, objectIdentity, privileges);
+  ): Promise<any> {
+    await this.adapter.store(securityIdentity, objectIdentity, privileges);
+  }
 
-  const retrieve = async (
+  public async retrieve(
     securityIdentity: SecurityIdentity,
     objectIdentity: ObjectIdentity,
-  ): Promise<Privileges> =>
-    (await adapter.retrieve(securityIdentity, objectIdentity)) || Privileges.NONE;
+  ): Promise<Privileges> {
+    return (await this.adapter.retrieve(securityIdentity, objectIdentity)) || Privileges.NONE;
+  }
 
-  const grant = async (
+  public async grant(
     securityIdentity: SecurityIdentity,
     objectIdentity: ObjectIdentity,
     privileges: Privileges,
-  ): Promise<any> =>
-    store(
+  ): Promise<any> {
+    return this.store(
       securityIdentity,
       objectIdentity,
-      (await retrieve(securityIdentity, objectIdentity)) | privileges,
+      (await this.retrieve(securityIdentity, objectIdentity)) | privileges,
     );
+  }
 
-  const _delete = async (
+  public async deny(
+    securityIdentity: SecurityIdentity,
+    objectIdentity: ObjectIdentity,
+    privileges: Privileges,
+  ): Promise<any> {
+    return this.store(
+      securityIdentity,
+      objectIdentity,
+      (await this.retrieve(securityIdentity, objectIdentity)) & ~privileges,
+    );
+  }
+
+  public async granted(
+    securityIdentity: SecurityIdentity,
+    objectIdentity: ObjectIdentity,
+    privileges: Privileges,
+  ): Promise<boolean> {
+    return ((await this.retrieve(securityIdentity, objectIdentity)) & privileges) === privileges;
+  }
+
+  public async delete(
     identityA: SecurityIdentity | ObjectIdentity,
     identityB?: SecurityIdentity | ObjectIdentity,
-  ): Promise<any> => {
-    if (isSecurityIdentity(identityA) && !identityB) {
-      return adapter.delete(identityA, identityB);
+  ): Promise<any> {
+    if (Yaacl.isSecurityIdentity(identityA) && !identityB) {
+      return this.adapter.delete(identityA, identityB);
     }
 
-    if (isObjectIdentity(identityA) && !identityB) {
-      return adapter.delete(identityB, identityA);
+    if (Yaacl.isObjectIdentity(identityA) && !identityB) {
+      return this.adapter.delete(identityB, identityA);
     }
 
-    if (isSecurityIdentity(identityA) && isObjectIdentity(identityB)) {
-      return adapter.delete(identityA, identityB);
+    if (Yaacl.isSecurityIdentity(identityA) && Yaacl.isObjectIdentity(identityB)) {
+      return this.adapter.delete(identityA, identityB);
     }
 
     throw new Error(
       'Invalid combination of arguments. You can either pass a single SecurityIdentity, a single ObjectIdentity or a SecurityIdentity and an ObjectIdentity in order.',
     );
-  };
-
-  const deny = async (
-    securityIdentity: SecurityIdentity,
-    objectIdentity: ObjectIdentity,
-    privileges: Privileges,
-  ): Promise<any> =>
-    store(
-      securityIdentity,
-      objectIdentity,
-      (await retrieve(securityIdentity, objectIdentity)) & ~privileges,
-    );
-
-  const granted = async (
-    securityIdentity: SecurityIdentity,
-    objectIdentity: ObjectIdentity,
-    privileges: Privileges,
-  ): Promise<boolean> =>
-    ((await retrieve(securityIdentity, objectIdentity)) & privileges) === privileges;
-
-  return {
-    store,
-    retrieve,
-    delete: _delete,
-    grant,
-    deny,
-    granted,
-  };
-};
+  }
+}
