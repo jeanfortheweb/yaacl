@@ -23,6 +23,11 @@ jobs:
   include:
     - stage: test
       script: 
+        - lerna run test
+
+    - stage: coverage
+      if: tag IS blank AND branch = master AND type != pull_request 
+      script: 
         - lerna run coverage
         - ./merge_lcov.sh
         - codecov
