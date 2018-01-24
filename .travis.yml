@@ -1,0 +1,50 @@
+if: tag IS blank
+language: node_js
+node_js:
+  - "lts/*"
+
+env:
+  global:
+    - CC_TEST_REPORTER_ID=6f2f009eb3da97e8fa65026915c7c88c89e46da2c29c028565814747358ca2a3
+
+cache:
+  yarn: true
+
+install:
+  - yarn install
+  - yarn global add lerna codecov
+  - lerna bootstrap
+
+services: mongodb
+
+jobs:
+  include:
+    - stage: test
+      if: tag IS blank
+      script: 
+        - lerna run test
+
+    - stage: coverage
+      if: tag IS blank AND branch = master AND type != pull_request
+      before_script:
+        - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+        - chmod +x ./cc-test-reporter
+        - ./cc-test-reporter before-build
+        - wget http://downloads.sourceforge.net/ltp/lcov-1.13.tar.gz
+        - tar -xvf lcov-1.13.tar.gz
+        - cd lcov-1.13 && sudo make install
+        - cd ..
+      script: 
+        - lerna run coverage
+        - ./merge_lcov.sh
+        - codecov
+      after_script:
+        - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+        - ./cc-test-reporter format-coverage -t lcov ./lcov.info
+        - ./cc-test-reporter upload-coverage
+
+    - stage: publish
+      if: tag IS blank AND branch = master AND type != pull_request
+      script:
+        - npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN
+        - lerna publish --yes --canary=pre --skip-git --npm-client=npm

@@ -1,0 +1,6 @@
+{
+  "license": "MIT",
+  "devDependencies": {
+    "lerna": "^2.8.0"
+  }
+}
