@@ -1106,7 +1106,7 @@ handlebars@^4.0.3:
   optionalDependencies:
     uglify-js "^2.6"
 
-hapi@17.2.0:
+hapi@^17.2.0:
   version "17.2.0"
   resolved "https://registry.yarnpkg.com/hapi/-/hapi-17.2.0.tgz#e5d74b65235b443225e05d7b7510cdb80d4887e7"
   dependencies:
@@ -1750,7 +1750,7 @@ jest@^22.1.4:
   dependencies:
     jest-cli "^22.1.4"
 
-joi@13.x.x:
+joi@13.x.x, joi@^13.1.1:
   version "13.1.1"
   resolved "https://registry.yarnpkg.com/joi/-/joi-13.1.1.tgz#1f306a5c3ded496da46629915d09e1ae3825185c"
   dependencies:
