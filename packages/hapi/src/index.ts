@@ -16,7 +16,7 @@ export class Plugin {
   }
 
   private static schema = Joi.object().keys({
-    adapter: Joi.object().required(),
+    adapter: Joi.required(),
     securityIdentityResolver: Joi.func().required(),
   });
 
@@ -54,8 +54,22 @@ export class Plugin {
     return securityIdentity;
   }
 
+  private getRoutePluginOptions(route: any) {
+    let options: any = null;
+
+    if (route.settings) {
+      options = route.settings.plugins.yaacl;
+    }
+
+    if (route.options) {
+      options = route.options && route.options.plugins && route.options.plugins.yaacl;
+    }
+
+    return options;
+  }
+
   private getRouteIdentity(route: any) {
-    const options = route.settings.plugins.yaacl;
+    const options = this.getRoutePluginOptions(route);
     let objectIdentity: ObjectIdentity;
 
     if (options && options.group) {
@@ -64,7 +78,7 @@ export class Plugin {
       };
     } else {
       objectIdentity = {
-        getObjectId: () => `${route.method}:${route.path}`,
+        getObjectId: () => `${route.method.toUpperCase()}:${route.path}`,
       };
     }
 
@@ -92,7 +106,7 @@ export class Plugin {
 
     if (options && options.privileges) {
       const securityIdentity = await this.getSecurityIdentityArray(request);
-      const objectIdentity = this.getRouteIdentity(request);
+      const objectIdentity = this.getRouteIdentity(request.route);
 
       if (!await this.isGranted(securityIdentity, objectIdentity, options.privileges)) {
         throw forbidden();
