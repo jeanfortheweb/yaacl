@@ -78,7 +78,7 @@ const adminRoutes = [
     handler: (request: any) => {
       // for more fine grained checks, you have access to yaccl inside of handlers too!
       const granted = await request.server.plugins.yaacl.api.isGranted(
-        exampleIdentities,
+        exampleIdentities[0],
         someOtherObjectIdentity,
         Privileges.REMOVE,
       );
