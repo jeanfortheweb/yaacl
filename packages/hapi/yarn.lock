@@ -26,12 +26,6 @@
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/@yaacl/core/-/core-0.4.0.tgz#5f07dd724281b6f5b3786cc8ee588d46860e8783"
 
-"@yaacl/memory-adapter@^0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@yaacl/memory-adapter/-/memory-adapter-0.4.0.tgz#ff8d3e4f1252946a110dc1864704dc04f96d0243"
-  dependencies:
-    "@yaacl/core" "^0.4.0"
-
 abab@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/abab/-/abab-1.0.4.tgz#5faad9c2c07f60dd76770f71cf025b62a63cfd4e"
