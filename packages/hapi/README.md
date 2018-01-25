@@ -1,6 +1,6 @@
 # YAACL - Hapi Integration
 
-Provides a plugin for [hapi](https://github.com/hapijs/hapi) to integrate the [yaacl](https://github.com/jeanfortheweb/yaacl) on route and/or handler level.
+Provides a plugin for [hapi](https://github.com/hapijs/hapi) to integrate [yaacl](https://github.com/jeanfortheweb/yaacl) on route and/or handler level.
 
 ```ts
 import { Privileges } from '@yaacl/core';
