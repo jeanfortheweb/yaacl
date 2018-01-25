@@ -86,15 +86,15 @@ export class Plugin {
   }
 
   private async isGranted(
-    securityIdentity: SecurityIdentity[],
+    securityIdentityArray: SecurityIdentity[],
     objectIdentity: ObjectIdentity,
     privileges: Privileges,
   ) {
     let index = 0;
     let granted = false;
 
-    while (granted === false && index < securityIdentity.length) {
-      granted = await this.yaacl.granted(securityIdentity[index], objectIdentity, privileges);
+    while (granted === false && index < securityIdentityArray.length) {
+      granted = await this.yaacl.granted(securityIdentityArray[index], objectIdentity, privileges);
       index++;
     }
 
