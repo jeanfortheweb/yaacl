@@ -1,6 +1,6 @@
 {
   "name": "@yaacl/memory-adapter",
-  "version": "0.4.0",
+  "version": "0.5.1",
   "description": "Memory adapter for yaacl",
   "main": "es5/index.js",
   "types": "es5/index.d.ts",
@@ -12,7 +12,11 @@
   "publishConfig": {
     "access": "public"
   },
-  "keywords": ["acl", "security", "adapter"],
+  "keywords": [
+    "acl",
+    "security",
+    "adapter"
+  ],
   "author": "jeanfortheweb",
   "repository": {
     "type": "git",
@@ -31,11 +35,14 @@
     "transform": {
       "^.+\\.ts$": "ts-jest"
     },
-    "moduleFileExtensions": ["ts", "js"],
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
     "testRegex": "\\.spec\\.ts$",
     "mapCoverage": true
   },
   "dependencies": {
-    "@yaacl/core": "^0.4.0"
+    "@yaacl/core": "^0.5.1"
   }
 }
