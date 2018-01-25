@@ -57,10 +57,12 @@ export class Plugin {
   private getRoutePluginOptions(route: any) {
     let options: any = null;
 
+    // if passed from request.
     if (route.settings) {
       options = route.settings.plugins.yaacl;
     }
 
+    // if passed from user/pure configuration.
     if (route.options) {
       options = route.options && route.options.plugins && route.options.plugins.yaacl;
     }
