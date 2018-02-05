@@ -25,7 +25,7 @@ await server.register({
   plugin,
   options: {
     adapter: new MemoryAdapter(),
-    securityIdentityResolver: (request: any) => {
+    securityIdentityResolver: request => {
       // return one or an array of SecurityIdentity objects
       // which you can generate from request data.
       return exampleIdentities;
