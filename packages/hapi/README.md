@@ -40,7 +40,7 @@ const securedRoute = server.route({
   method: 'get',
   options: {
     plugins: {
-      yaccl: {
+      yaacl: {
         privileges: Privileges.READ,
       },
     },
@@ -56,7 +56,7 @@ const adminRoutes = [
     method: 'get',
     options: {
       plugins: {
-        yaccl: {
+        yaacl: {
           group: 'admins',
           privileges: Privileges.READ,
         },
@@ -69,14 +69,14 @@ const adminRoutes = [
     method: 'get',
     options: {
       plugins: {
-        yaccl: {
+        yaacl: {
           group: 'admins',
           privileges: Privileges.READ | Privileges.REMOVE,
         },
       },
     },
     handler: (request: any) => {
-      // for more fine grained checks, you have access to yaccl inside of handlers too!
+      // for more fine grained checks, you have access to yaacl inside of handlers too!
       const granted = await request.server.plugins.yaacl.api.isGranted(
         exampleIdentities[0],
         someOtherObjectIdentity,
