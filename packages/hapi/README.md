@@ -2,6 +2,8 @@
 
 Provides a plugin for [hapi](https://github.com/hapijs/hapi) to integrate [yaacl](https://github.com/jeanfortheweb/yaacl) on route and/or handler level.
 
+Install `yarn add @yaacl/core @yaacl/hapi @yaacl/memory-adapter` or use `@yaacl/mongoose-adapter` instead.
+
 ```ts
 import { Privileges } from '@yaacl/core';
 import { MemoryAdapter } from '@yaacl/memory-adapter';
