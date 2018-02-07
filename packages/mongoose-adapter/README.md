@@ -1,12 +1,10 @@
 # YAACL - Mongoose Adapter
 
-This YAACL adapter utilizes mongoose and mondodb to persist ACL information.
-There is no configuration required, but the adapter assumes that you open your mongoose/mongodb
-connection yourself before using it.
+This YAACL adapter utilizes mongoose and mongodb to persist ACL information.
 
 ## How to use
 
-1. Install the yaacl core and an adapter of your choice:
+1. Install the yaacl core and the yaacl mongoose-adapter:
 
 ```sh
 yarn install @yaacl/core @yaacl/mongoose-adapter
@@ -42,7 +40,3 @@ example();
 ```
 
 For a full documentation of YAACL, please visit our [Wiki](https://github.com/jeanfortheweb/yaacl/wiki)
-
-```
-
-```
