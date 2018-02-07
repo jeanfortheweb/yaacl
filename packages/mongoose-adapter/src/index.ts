@@ -25,12 +25,7 @@ export class MongooseAdapter implements Adapter {
     objectIdentity: ObjectIdentity,
     privileges: Privileges,
   ): Promise<any> {
-    let entry = await this._entryModel
-      .findOne({
-        securityIdentity: securityIdentity.getSecurityId(),
-        objectIdentity: objectIdentity.getObjectId(),
-      })
-      .exec();
+    let entry = await this._find(securityIdentity, objectIdentity);
 
     if (!entry) {
       entry = new this._entryModel({
@@ -48,12 +43,7 @@ export class MongooseAdapter implements Adapter {
     securityIdentity: SecurityIdentity,
     objectIdentity: ObjectIdentity,
   ): Promise<Privileges> {
-    const entry = await this._entryModel
-      .findOne({
-        securityIdentity: securityIdentity.getSecurityId(),
-        objectIdentity: objectIdentity.getObjectId(),
-      })
-      .exec();
+    const entry = await this._find(securityIdentity, objectIdentity);
 
     return (entry && entry.privileges) || Privileges.NONE;
   }
@@ -73,5 +63,17 @@ export class MongooseAdapter implements Adapter {
     }
 
     await this._entryModel.remove(conditions).exec();
+  }
+
+  private async _find(
+    securityIdentity: SecurityIdentity,
+    objectIdentity: ObjectIdentity,
+  ): Promise<EntryDocument | null> {
+    return await this._entryModel
+      .findOne({
+        securityIdentity: securityIdentity.getSecurityId(),
+        objectIdentity: objectIdentity.getObjectId(),
+      })
+      .exec();
   }
 }

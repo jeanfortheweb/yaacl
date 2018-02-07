@@ -11,13 +11,16 @@ const objectIdentity: ObjectIdentity = {
 };
 
 let adapter: MongooseAdapter;
+let i = 0;
 
 describe('@yaacl/mongoose-adapter', () => {
-  beforeAll(async () => {
+  beforeEach(async () => {
     const connection = await createConnection('mongodb://localhost/mongoose-adapter-test');
     await connection.db.dropDatabase();
 
-    adapter = new MongooseAdapter(connection);
+    i++;
+
+    adapter = new MongooseAdapter(connection, i % 2 === 1 ? '__YAACL_TEST__' : undefined);
   });
 
   test('privileges to be initially undefined', async () => {
