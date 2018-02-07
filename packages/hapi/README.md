@@ -2,6 +2,8 @@
 
 Provides a plugin for [hapi](https://github.com/hapijs/hapi) to integrate [yaacl](https://github.com/jeanfortheweb/yaacl) on route and/or handler level.
 
+Install `yarn add @yaacl/core @yaacl/hapi @yaacl/memory-adapter` or use `@yaacl/mongoose-adapter` instead.
+
 ```ts
 import { Privileges } from '@yaacl/core';
 import { MemoryAdapter } from '@yaacl/memory-adapter';
@@ -25,7 +27,7 @@ await server.register({
   plugin,
   options: {
     adapter: new MemoryAdapter(),
-    securityIdentityResolver: (request: any) => {
+    securityIdentityResolver: request => {
       // return one or an array of SecurityIdentity objects
       // which you can generate from request data.
       return exampleIdentities;
@@ -40,7 +42,7 @@ const securedRoute = server.route({
   method: 'get',
   options: {
     plugins: {
-      yaccl: {
+      yaacl: {
         privileges: Privileges.READ,
       },
     },
@@ -56,7 +58,7 @@ const adminRoutes = [
     method: 'get',
     options: {
       plugins: {
-        yaccl: {
+        yaacl: {
           group: 'admins',
           privileges: Privileges.READ,
         },
@@ -69,16 +71,16 @@ const adminRoutes = [
     method: 'get',
     options: {
       plugins: {
-        yaccl: {
+        yaacl: {
           group: 'admins',
           privileges: Privileges.READ | Privileges.REMOVE,
         },
       },
     },
-    handler: (request: any) => {
-      // for more fine grained checks, you have access to yaccl inside of handlers too!
+    handler: request => {
+      // for more fine grained checks, you have access to yaacl inside of handlers too!
       const granted = await request.server.plugins.yaacl.api.isGranted(
-        exampleIdentities,
+        exampleIdentities[0],
         someOtherObjectIdentity,
         Privileges.REMOVE,
       );

@@ -13,21 +13,22 @@ export const EntrySchema = new mongoose.Schema({
   privileges: Number,
 });
 
-export const EntryModel = mongoose.model<EntryDocument>('__YACCL__', EntrySchema);
-
 export class MongooseAdapter implements Adapter {
+  private _entryModel: mongoose.Model<EntryDocument>;
+
+  constructor(connection: mongoose.Connection, collection: string = '__YAACL__') {
+    this._entryModel = connection.model<EntryDocument>(collection, EntrySchema);
+  }
+
   public async store(
     securityIdentity: SecurityIdentity,
     objectIdentity: ObjectIdentity,
     privileges: Privileges,
   ): Promise<any> {
-    let entry = await EntryModel.findOne({
-      securityIdentity: securityIdentity.getSecurityId(),
-      objectIdentity: objectIdentity.getObjectId(),
-    }).exec();
+    let entry = await this._find(securityIdentity, objectIdentity);
 
     if (!entry) {
-      entry = new EntryModel({
+      entry = new this._entryModel({
         securityIdentity: securityIdentity.getSecurityId(),
         objectIdentity: objectIdentity.getObjectId(),
       });
@@ -42,10 +43,7 @@ export class MongooseAdapter implements Adapter {
     securityIdentity: SecurityIdentity,
     objectIdentity: ObjectIdentity,
   ): Promise<Privileges> {
-    const entry = await EntryModel.findOne({
-      securityIdentity: securityIdentity.getSecurityId(),
-      objectIdentity: objectIdentity.getObjectId(),
-    }).exec();
+    const entry = await this._find(securityIdentity, objectIdentity);
 
     return (entry && entry.privileges) || Privileges.NONE;
   }
@@ -64,6 +62,18 @@ export class MongooseAdapter implements Adapter {
       conditions.objectIdentity = objectIdentity.getObjectId();
     }
 
-    await EntryModel.remove(conditions).exec();
+    await this._entryModel.remove(conditions).exec();
+  }
+
+  private async _find(
+    securityIdentity: SecurityIdentity,
+    objectIdentity: ObjectIdentity,
+  ): Promise<EntryDocument | null> {
+    return await this._entryModel
+      .findOne({
+        securityIdentity: securityIdentity.getSecurityId(),
+        objectIdentity: objectIdentity.getObjectId(),
+      })
+      .exec();
   }
 }
