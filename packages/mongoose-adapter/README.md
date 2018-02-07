@@ -17,24 +17,26 @@ yarn install @yaacl/core @yaacl/mongoose-adapter
 ```ts
 import { Yaacl, Privileges, SecurityIdentity, ObjectIdentity } from '@yaacl/core';
 import { MongooseAdapter } from '@yaacl/mongoose-adapter';
-
-const yaacl = new Yaacl(new MongooseAdapter());
-
-// a security identity could be a user, a role...
-const securityIdentity: SecurityIdentity = {
-	getSecurityId: () => 'user-242',
-};
-
-// an object identity could be anything, like a blog post, a page...
-const objectIdentity: ObjectIdentity = {
-	getObjectId: () => 'object-4664';
-};
+import { createConnection } from 'mongoose';
 
 const example = async () => {
+  const connection = await createConnection('mongodb://localhost/mongoose-adapter-test');
+  const yaacl = new Yaacl(new MongooseAdapter(connection));
+
+  // a security identity could be a user, a role...
+  const securityIdentity: SecurityIdentity = {
+    getSecurityId: () => 'user-242',
+  };
+
+  // an object identity could be anything, like a blog post, a page...
+  const objectIdentity: ObjectIdentity = {
+    getObjectId: () => 'object-4664',
+  };
+
   await yaacl.grant(securityIdentity, objectIdentity, Privileges.READ);
   await yaacl.granted(securityIdentity, objectIdentity, Privileges.READ); // true
-  await yaacl.granted(securityIdentity, objectIdentity, Privileges.WRITE) // false
-}
+  await yaacl.granted(securityIdentity, objectIdentity, Privileges.WRITE); // false
+};
 
 example();
 ```
