@@ -20,6 +20,20 @@ describe('@yaacl/hapi', () => {
     expect(response.statusCode).toBe(code);
   };
 
+  const assertGrant = async (url: string, route: any) => {
+    securityIdentityResolver.mockReturnValue({
+      getSecurityId: () => 'user-1',
+    });
+
+    const routeIdentity = server.plugins.yaacl.getRouteIdentity(route);
+    const securityIdentity = { getSecurityId: () => 'user-1' };
+
+    await server.plugins.yaacl.api.deny(securityIdentity, routeIdentity, Privileges.READ);
+    await assertStatusCode(url, 403);
+    await server.plugins.yaacl.api.grant(securityIdentity, routeIdentity, Privileges.READ);
+    await assertStatusCode(url, 200);
+  };
+
   const securedRoute = {
     path: '/secured',
     method: 'GET',
@@ -47,15 +61,31 @@ describe('@yaacl/hapi', () => {
     handler: () => 'ALL OK',
   };
 
+  const customRoute = {
+    path: '/custom',
+    method: 'GET',
+    options: {
+      plugins: {
+        yaacl: {
+          identity: {
+            getObjectId: () => 'custom',
+          },
+          privileges: Privileges.READ,
+        },
+      },
+    },
+    handler: () => 'ALL OK',
+  };
+
   const publicRoute = {
     path: '/public',
     method: 'GET',
     handler: () => 'ALL OK',
   };
 
-  server.route([securedRoute, groupedRoute, publicRoute]);
+  server.route([securedRoute, groupedRoute, customRoute, publicRoute]);
 
-  test('plugin registers', async () => {
+  test('registers', async () => {
     await server.register({
       plugin,
       options: {
@@ -65,17 +95,17 @@ describe('@yaacl/hapi', () => {
     });
   });
 
-  test('plugin throws unauthorized when no security identity is given', async () => {
+  test('throws unauthorized when no security identity is given', async () => {
     securityIdentityResolver.mockReturnValueOnce(null);
 
     await assertStatusCode('/secured', 401);
   });
 
-  test('plugin throws forbidden when privileges do not match', async () => {
+  test('throws forbidden when privileges do not match', async () => {
     await assertStatusCode('/secured', 403);
   });
 
-  test('plugin handles multiple security identities properly', async () => {
+  test('handles multiple security identities properly', async () => {
     const securityIdentityArray: SecurityIdentity[] = [
       {
         getSecurityId: () => 'user-1',
@@ -97,24 +127,24 @@ describe('@yaacl/hapi', () => {
     await assertStatusCode('/secured', 200);
   });
 
-  test('plugin handles grouped routes properly', async () => {
-    securityIdentityResolver.mockReturnValueOnce({
-      getSecurityId: () => 'user-1',
-    });
-
-    await assertStatusCode('/grouped', 403);
-
-    console.log(server.plugins.yaacl.getRouteIdentity(groupedRoute).getObjectId());
-    await server.plugins.yaacl.api.grant(
-      { getSecurityId: () => 'user-1' },
-      server.plugins.yaacl.getRouteIdentity(groupedRoute),
-      Privileges.READ,
-    );
-
-    await assertStatusCode('/grouped', 200);
+  test('handles grouped routes properly', async () => {
+    await assertGrant('/grouped', groupedRoute);
   });
 
-  test('plugin ignores routes without configured privileges', async () => {
+  test('handles custom identities properly', async () => {
+    await assertGrant('/custom', customRoute);
+  });
+
+  test('getRouteIdentity helper does work without any route options', async () => {
+    const identity = server.plugins.yaacl.getRouteIdentity(publicRoute);
+
+    expect(typeof identity.getObjectId).toEqual('function');
+    expect(identity.getObjectId()).toEqual(
+      `${publicRoute.method.toUpperCase()}:${publicRoute.path}`,
+    );
+  });
+
+  test('ignores routes without configured privileges', async () => {
     await assertStatusCode('/public', 200);
   });
 });

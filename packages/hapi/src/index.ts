@@ -7,6 +7,40 @@ export interface PluginOptions {
   securityIdentityResolver: (request: any) => SecurityIdentity | SecurityIdentity[];
 }
 
+const getRoutePluginOptions = (route: any) => {
+  let options: any = null;
+
+  // if passed from request.
+  if (route.settings) {
+    options = route.settings.plugins.yaacl;
+  }
+
+  // if passed from user/pure configuration.
+  if (route.options) {
+    options = route.options && route.options.plugins && route.options.plugins.yaacl;
+  }
+
+  return options || {};
+};
+
+export const getRouteIdentity = (route: any) => {
+  const options = getRoutePluginOptions(route);
+
+  if (options.identity) {
+    return options.identity;
+  }
+
+  if (options.group) {
+    return {
+      getObjectId: () => options.group,
+    };
+  }
+
+  return {
+    getObjectId: () => `${route.method.toUpperCase()}:${route.path}`,
+  };
+};
+
 export class Plugin {
   public static register(server: any, options: PluginOptions) {
     return new Plugin(
@@ -37,7 +71,7 @@ export class Plugin {
     this.server = server;
     this.server.ext('onPostAuth', this.onPostAuth.bind(this));
     this.server.expose('api', this.yaacl);
-    this.server.expose('getRouteIdentity', this.getRouteIdentity.bind(this));
+    this.server.expose('getRouteIdentity', getRouteIdentity);
   }
 
   private async getSecurityIdentityArray(request: any) {
@@ -52,39 +86,6 @@ export class Plugin {
     }
 
     return securityIdentity;
-  }
-
-  private getRoutePluginOptions(route: any) {
-    let options: any = null;
-
-    // if passed from request.
-    if (route.settings) {
-      options = route.settings.plugins.yaacl;
-    }
-
-    // if passed from user/pure configuration.
-    if (route.options) {
-      options = route.options && route.options.plugins && route.options.plugins.yaacl;
-    }
-
-    return options;
-  }
-
-  private getRouteIdentity(route: any) {
-    const options = this.getRoutePluginOptions(route);
-    let objectIdentity: ObjectIdentity;
-
-    if (options && options.group) {
-      objectIdentity = {
-        getObjectId: () => options.group,
-      };
-    } else {
-      objectIdentity = {
-        getObjectId: () => `${route.method.toUpperCase()}:${route.path}`,
-      };
-    }
-
-    return objectIdentity;
   }
 
   private async isGranted(
@@ -108,7 +109,7 @@ export class Plugin {
 
     if (options && options.privileges) {
       const securityIdentity = await this.getSecurityIdentityArray(request);
-      const objectIdentity = this.getRouteIdentity(request.route);
+      const objectIdentity = getRouteIdentity(request.route);
 
       if (!await this.isGranted(securityIdentity, objectIdentity, options.privileges)) {
         throw forbidden();
