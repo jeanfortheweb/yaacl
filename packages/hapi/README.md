@@ -86,7 +86,11 @@ const adminRoutes = [
       );
 
       if (granted) {
-        return 'Deleted!';
+        // you also have access to the actual resolved securityIdentity and objectIdentity
+        // through request.plugins.yaacl!
+        const { securityIdentity, objectIdentity } = request.plugins.yaacl;
+
+        return `Deleted ${objectIdentity.getSecurityId()} by ${objectIdentity.getObjectId()}`;
       }
 
       throw forbidden();

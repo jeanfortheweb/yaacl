@@ -42,7 +42,7 @@ export const getRouteIdentity = (route: any) => {
 };
 
 export class Plugin {
-  public static register(server: any, options: PluginOptions) {
+  public static register(server: any, options: PluginOptions): Plugin {
     return new Plugin(
       server,
       Joi.attempt<PluginOptions>(options, Plugin.schema, 'Invalid options'),
@@ -74,7 +74,7 @@ export class Plugin {
     this.server.expose('getRouteIdentity', getRouteIdentity);
   }
 
-  private async getSecurityIdentityArray(request: any) {
+  private async getSecurityIdentityArray(request: any): Promise<SecurityIdentity[]> {
     const securityIdentity = await this.options.securityIdentityResolver(request);
 
     if (!securityIdentity) {
@@ -92,7 +92,7 @@ export class Plugin {
     securityIdentityArray: SecurityIdentity[],
     objectIdentity: ObjectIdentity,
     privileges: Privileges,
-  ) {
+  ): Promise<[SecurityIdentity, ObjectIdentity] | false> {
     let index = 0;
     let granted = false;
 
@@ -101,7 +101,7 @@ export class Plugin {
       index++;
     }
 
-    return granted;
+    return granted ? [securityIdentityArray[index - 1], objectIdentity] : false;
   }
 
   private async onPostAuth(request, h) {
@@ -110,9 +110,14 @@ export class Plugin {
     if (options && options.privileges) {
       const securityIdentity = await this.getSecurityIdentityArray(request);
       const objectIdentity = getRouteIdentity(request.route);
-
-      if (!await this.isGranted(securityIdentity, objectIdentity, options.privileges)) {
+      const granted = await this.isGranted(securityIdentity, objectIdentity, options.privileges);
+      if (granted === false) {
         throw forbidden();
+      } else {
+        request.plugins.yaacl = {
+          securityIdentity: granted[0],
+          objectIdentity: granted[1],
+        };
       }
     }
 
