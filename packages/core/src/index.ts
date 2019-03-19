@@ -21,6 +21,9 @@ export interface SecurityIdentity {
   getSecurityId: () => string;
 }
 
+/**
+ *
+ */
 export enum Privileges {
   NONE = 0,
   READ = 1,
