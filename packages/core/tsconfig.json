@@ -10,7 +10,8 @@
     "noImplicitThis": false,
     "strictNullChecks": true,
     "forceConsistentCasingInFileNames": true,
-    "noUnusedLocals": true
+    "noUnusedLocals": true,
+    "skipLibCheck": true
   },
   "include": ["src", "node_modules/@types"]
 }
