@@ -1,6 +1,6 @@
 {
   "name": "@yaacl/hapi",
-  "version": "0.6.0",
+  "version": "1.0.0",
   "description": "YAACL integration for hapi",
   "main": "es5/index.js",
   "types": "es5/index.d.ts",
@@ -28,7 +28,7 @@
     "@types/jest": "^24.0.11",
     "@types/joi": "^14.3.2",
     "@types/node": "^11.11.3",
-    "@yaacl/memory-adapter": "^0.6.0",
+    "@yaacl/memory-adapter": "^1.0.0",
     "jest": "^24.5.0",
     "ts-jest": "^24.0.0",
     "typescript": "^3.3.3333"
@@ -45,7 +45,7 @@
     "testRegex": "\\.spec\\.ts$"
   },
   "dependencies": {
-    "@yaacl/core": "^0.6.0",
+    "@yaacl/core": "^1.0.0",
     "hapi": "^18.1.0",
     "joi": "^14.3.1"
   }
