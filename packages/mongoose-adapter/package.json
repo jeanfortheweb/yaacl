@@ -1,6 +1,6 @@
 {
   "name": "@yaacl/mongoose-adapter",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "Mongoose adapter for yaacl",
   "main": "es5/index.js",
   "types": "es5/index.d.ts",
@@ -44,7 +44,7 @@
     "mapCoverage": true
   },
   "dependencies": {
-    "@yaacl/core": "^0.5.1",
+    "@yaacl/core": "^0.6.0",
     "mongoose": "^5.0.1"
   }
 }
