@@ -3,14 +3,14 @@ export interface Adapter {
     securityIdentity: SecurityIdentity,
     objectIdentity: ObjectIdentity,
     privileges: Privileges,
-  ) => Promise<any>;
+  ) => Promise<void>;
 
   retrieve: (
     securityIdentity: SecurityIdentity,
     objectIdentity: ObjectIdentity,
   ) => Promise<Privileges>;
 
-  delete: (securityIdentity?: SecurityIdentity, objectIdentity?: ObjectIdentity) => Promise<any>;
+  delete: (securityIdentity?: SecurityIdentity, objectIdentity?: ObjectIdentity) => Promise<void>;
 }
 
 export interface ObjectIdentity {
@@ -65,7 +65,7 @@ export class Yaacl {
     securityIdentity: SecurityIdentity,
     objectIdentity: ObjectIdentity,
     privileges: Privileges,
-  ): Promise<any> {
+  ): Promise<void> {
     return this.store(
       securityIdentity,
       objectIdentity,
@@ -77,7 +77,7 @@ export class Yaacl {
     securityIdentity: SecurityIdentity,
     objectIdentity: ObjectIdentity,
     privileges: Privileges,
-  ): Promise<any> {
+  ): Promise<void> {
     return this.store(
       securityIdentity,
       objectIdentity,
@@ -96,7 +96,7 @@ export class Yaacl {
   public async delete(
     identityA: SecurityIdentity | ObjectIdentity,
     identityB?: SecurityIdentity | ObjectIdentity,
-  ): Promise<any> {
+  ): Promise<void> {
     if (Yaacl.isSecurityIdentity(identityA) && !identityB) {
       return this.adapter.delete(identityA, identityB);
     }
@@ -110,6 +110,7 @@ export class Yaacl {
     }
 
     throw new Error(
+      // tslint:disable-next-line:max-line-length
       'Invalid combination of arguments. You can either pass a single SecurityIdentity, a single ObjectIdentity or a SecurityIdentity and an ObjectIdentity in order.',
     );
   }
