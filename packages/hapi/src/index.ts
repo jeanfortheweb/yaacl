@@ -1,29 +1,61 @@
 import { Yaacl, Adapter, SecurityIdentity, ObjectIdentity, Privileges } from '@yaacl/core';
 import { unauthorized, forbidden } from 'boom';
 import * as Joi from 'joi';
+import { Server, Request, ResponseToolkit, RequestRoute, ServerRoute } from 'hapi';
 
 export interface PluginOptions {
   adapter: Adapter;
-  securityIdentityResolver: (request: any) => SecurityIdentity | SecurityIdentity[];
+  securityIdentityResolver: (
+    request: Request,
+  ) =>
+    | Promise<SecurityIdentity | SecurityIdentity[]>
+    | SecurityIdentity
+    | SecurityIdentity[]
+    | undefined;
 }
 
-const getRoutePluginOptions = (route: any) => {
-  let options: any = null;
+export interface PluginSpecificRouteSettings {
+  privileges?: number;
+  identity?: ObjectIdentity;
+  group?: string;
+}
 
-  // if passed from request.
-  if (route.settings) {
-    options = route.settings.plugins.yaacl;
-  }
+export interface PluginState {
+  yaacl: {
+    securityIdentity: SecurityIdentity;
+    objectIdentity: ObjectIdentity;
+  };
+}
+
+function isServerRoute(route: RequestRoute | ServerRoute): route is ServerRoute {
+  return typeof (route as any).handler === 'function';
+}
+
+function getRoutePluginOptions(route: RequestRoute | ServerRoute): PluginSpecificRouteSettings {
+  let candidate: any = null;
 
   // if passed from user/pure configuration.
-  if (route.options) {
-    options = route.options && route.options.plugins && route.options.plugins.yaacl;
+  if (isServerRoute(route)) {
+    if (route.options && typeof route.options !== 'function') {
+      candidate = route.options && route.options.plugins && (route.options.plugins as any).yaacl;
+    }
+  } else {
+    // if passed from request.
+    candidate =
+      route.settings &&
+      route.settings.plugins &&
+      route.settings.plugins &&
+      (route.settings.plugins as any).yaacl;
   }
 
-  return options || {};
-};
+  if (candidate) {
+    return candidate as PluginSpecificRouteSettings;
+  }
 
-export const getRouteIdentity = (route: any) => {
+  return {};
+}
+
+export const getRouteIdentity = (route: RequestRoute | ServerRoute): ObjectIdentity => {
   const options = getRoutePluginOptions(route);
 
   if (options.identity) {
@@ -32,89 +64,75 @@ export const getRouteIdentity = (route: any) => {
 
   if (options.group) {
     return {
-      getObjectId: () => options.group,
+      getObjectId: () => options.group as string,
     };
   }
 
-  return {
-    getObjectId: () => `${route.method.toUpperCase()}:${route.path}`,
-  };
-};
-
-export class Plugin {
-  public static register(server: any, options: PluginOptions): Plugin {
-    return new Plugin(
-      server,
-      Joi.attempt<PluginOptions>(options, Plugin.schema, 'Invalid options'),
+  if (Array.isArray(route.method)) {
+    throw new Error(
+      `Routes with multiple methods are currently not supported by getRouteIdentity()`,
     );
   }
 
-  private static schema = Joi.object().keys({
-    adapter: Joi.required(),
-    securityIdentityResolver: Joi.func().required(),
-  });
+  return {
+    getObjectId: () => `${route.method.toString().toUpperCase()}:${route.path}`,
+  };
+};
 
-  private static isIdentityArray(
-    identity: SecurityIdentity | SecurityIdentity[],
-  ): identity is SecurityIdentity[] {
-    return Array.isArray(identity);
+const schema = Joi.object().keys({
+  adapter: Joi.required(),
+  securityIdentityResolver: Joi.func().required(),
+});
+
+async function getSecurityIdentityArray(
+  options: PluginOptions,
+  request: Request,
+): Promise<SecurityIdentity[]> {
+  const securityIdentity = await options.securityIdentityResolver(request);
+
+  if (securityIdentity === undefined || securityIdentity === null) {
+    throw unauthorized();
   }
 
-  private server: any;
-  private options: PluginOptions;
-  private yaacl: Yaacl;
-
-  private constructor(server: any, options: PluginOptions) {
-    this.options = options;
-    this.yaacl = new Yaacl(this.options.adapter);
-
-    this.server = server;
-    this.server.ext('onPostAuth', this.onPostAuth.bind(this));
-    this.server.expose('api', this.yaacl);
-    this.server.expose('getRouteIdentity', getRouteIdentity);
-  }
-
-  private async getSecurityIdentityArray(request: any): Promise<SecurityIdentity[]> {
-    const securityIdentity = await this.options.securityIdentityResolver(request);
-
-    if (!securityIdentity) {
-      throw unauthorized();
-    }
-
-    if (!Plugin.isIdentityArray(securityIdentity)) {
-      return [securityIdentity];
-    }
-
+  if (Array.isArray(securityIdentity)) {
     return securityIdentity;
   }
 
-  private async isGranted(
-    securityIdentityArray: SecurityIdentity[],
-    objectIdentity: ObjectIdentity,
-    privileges: Privileges,
-  ): Promise<[SecurityIdentity, ObjectIdentity] | false> {
-    let index = 0;
-    let granted = false;
+  return [securityIdentity];
+}
 
-    while (granted === false && index < securityIdentityArray.length) {
-      granted = await this.yaacl.granted(securityIdentityArray[index], objectIdentity, privileges);
-      index++;
-    }
+async function isGranted(
+  yaacl: Yaacl,
+  securityIdentityArray: SecurityIdentity[],
+  objectIdentity: ObjectIdentity,
+  privileges: Privileges,
+): Promise<[SecurityIdentity, ObjectIdentity] | false> {
+  let index = 0;
+  let granted = false;
+  let securityIdentity: SecurityIdentity | undefined;
 
-    return granted ? [securityIdentityArray[index - 1], objectIdentity] : false;
+  while (granted === false && index < securityIdentityArray.length) {
+    securityIdentity = securityIdentityArray[index];
+    granted = await yaacl.granted(securityIdentity, objectIdentity, privileges);
+    index++;
   }
 
-  private async onPostAuth(request, h) {
-    const options = request.route.settings.plugins.yaacl;
+  return granted ? [securityIdentity as SecurityIdentity, objectIdentity] : false;
+}
 
-    if (options && options.privileges) {
-      const securityIdentity = await this.getSecurityIdentityArray(request);
+function onPostAuth(yaacl: Yaacl, pluginOptions: PluginOptions) {
+  return async (request: Request, h: ResponseToolkit) => {
+    const options = getRoutePluginOptions(request.route);
+
+    if (options.privileges) {
+      const securityIdentity = await getSecurityIdentityArray(pluginOptions, request);
       const objectIdentity = getRouteIdentity(request.route);
-      const granted = await this.isGranted(securityIdentity, objectIdentity, options.privileges);
+      const granted = await isGranted(yaacl, securityIdentity, objectIdentity, options.privileges);
+
       if (granted === false) {
         throw forbidden();
       } else {
-        request.plugins.yaacl = {
+        (request.plugins as PluginState).yaacl = {
           securityIdentity: granted[0],
           objectIdentity: granted[1],
         };
@@ -122,12 +140,18 @@ export class Plugin {
     }
 
     return h.continue;
-  }
+  };
 }
 
-export default {
-  name: 'yaacl',
-  // tslint:disable-next-line: no-require-imports
-  version: require('../package.json').version,
-  register: Plugin.register,
-};
+export const name = 'yaacl';
+// tslint:disable-next-line:no-var-requires no-require-imports
+export const version = require('../package.json').version;
+
+export function register(server: Server, rawOptions: PluginOptions) {
+  const options = Joi.attempt<PluginOptions>(rawOptions, schema, 'Invalid options');
+  const yaacl = new Yaacl(options.adapter);
+
+  server.ext('onPostAuth', onPostAuth(yaacl, options));
+  server.expose('api', yaacl);
+  server.expose('getRouteIdentity', getRouteIdentity);
+}

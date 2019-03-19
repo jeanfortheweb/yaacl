@@ -1,9 +1,9 @@
 import * as Hapi from 'hapi';
-import plugin from './';
+import * as plugin from './';
 import { Privileges, SecurityIdentity } from '@yaacl/core';
 import { MemoryAdapter } from '@yaacl/memory-adapter';
 
-const server: any = Hapi.server({
+const server: Hapi.Server = new Hapi.Server({
   port: 8080,
 });
 
@@ -20,14 +20,14 @@ const assertStatusCode = async (url: string, code: Number) => {
 };
 
 const assertGrant = async (url: string, route: any) => {
-  const routeIdentity = server.plugins.yaacl.getRouteIdentity(route);
+  const routeIdentity = (server.plugins as any).yaacl.getRouteIdentity(route);
   const securityIdentity = { getSecurityId: () => 'user-1' };
 
   securityIdentityResolver.mockReturnValue(securityIdentity);
 
-  await server.plugins.yaacl.api.deny(securityIdentity, routeIdentity, Privileges.READ);
+  await (server.plugins as any).yaacl.api.deny(securityIdentity, routeIdentity, Privileges.READ);
   await assertStatusCode(url, 403);
-  await server.plugins.yaacl.api.grant(securityIdentity, routeIdentity, Privileges.READ);
+  await (server.plugins as any).yaacl.api.grant(securityIdentity, routeIdentity, Privileges.READ);
   await assertStatusCode(url, 200);
 };
 
@@ -71,6 +71,12 @@ const customRoute = {
       },
     },
   },
+  handler: () => 'ALL OK',
+};
+
+const invalidRoute = {
+  path: '/invalid',
+  method: ['GET', 'POST'],
   handler: () => 'ALL OK',
 };
 
@@ -137,9 +143,9 @@ test('handles multiple security identities properly', async () => {
   securityIdentityResolver.mockReset();
   securityIdentityResolver.mockReturnValue(securityIdentityArray);
 
-  await server.plugins.yaacl.api.grant(
+  await (server.plugins as any).yaacl.api.grant(
     securityIdentityArray[1],
-    server.plugins.yaacl.getRouteIdentity(securedRoute),
+    (server.plugins as any).yaacl.getRouteIdentity(securedRoute),
     Privileges.READ,
   );
 
@@ -159,7 +165,7 @@ test('resolved identities are present', async () => {
 });
 
 test('getRouteIdentity helper does work without any route options', async () => {
-  const identity = server.plugins.yaacl.getRouteIdentity(publicRoute);
+  const identity = (server.plugins as any).yaacl.getRouteIdentity(publicRoute);
 
   expect(typeof identity.getObjectId).toEqual('function');
   expect(identity.getObjectId()).toEqual(`${publicRoute.method.toUpperCase()}:${publicRoute.path}`);
@@ -167,4 +173,10 @@ test('getRouteIdentity helper does work without any route options', async () => 
 
 test('ignores routes without configured privileges', async () => {
   await assertStatusCode('/public', 200);
+});
+
+test('should throw on routes with multiple methods assigned', async () => {
+  expect(() => {
+    (server.plugins as any).yaacl.getRouteIdentity(invalidRoute);
+  }).toThrow();
 });

@@ -24,13 +24,14 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@types/jest": "^22.0.1",
-    "@types/joi": "^13.0.5",
-    "@types/node": "^9.3.0",
+    "@types/hapi": "^18.0.1",
+    "@types/jest": "^24.0.11",
+    "@types/joi": "^14.3.2",
+    "@types/node": "^11.11.3",
     "@yaacl/memory-adapter": "^0.6.0",
-    "jest": "^22.1.4",
-    "ts-jest": "^22.0.1",
-    "typescript": "^2.6.2"
+    "jest": "^24.5.0",
+    "ts-jest": "^24.0.0",
+    "typescript": "^3.3.3333"
   },
   "jest": {
     "bail": true,
@@ -41,12 +42,11 @@
       "ts",
       "js"
     ],
-    "testRegex": "\\.spec\\.ts$",
-    "mapCoverage": true
+    "testRegex": "\\.spec\\.ts$"
   },
   "dependencies": {
     "@yaacl/core": "^0.6.0",
-    "hapi": "^17.2.0",
-    "joi": "^13.1.1"
+    "hapi": "^18.1.0",
+    "joi": "^14.3.1"
   }
 }
