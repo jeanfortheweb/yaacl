@@ -23,11 +23,11 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@types/jest": "^22.0.1",
-    "@types/node": "^9.3.0",
-    "jest": "^22.1.4",
-    "ts-jest": "^22.0.1",
-    "typescript": "^2.6.2"
+    "@types/jest": "^24.0.11",
+    "@types/node": "^11.11.3",
+    "jest": "^24.5.0",
+    "ts-jest": "^24.0.0",
+    "typescript": "^3.3.3333"
   },
   "jest": {
     "bail": true,
@@ -38,7 +38,6 @@
       "ts",
       "js"
     ],
-    "testRegex": "\\.spec\\.ts$",
-    "mapCoverage": true
+    "testRegex": "\\.spec\\.ts$"
   }
 }
